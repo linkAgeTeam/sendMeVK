@@ -18,44 +18,53 @@ function documentLoad(){
 function menu (pointer){
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.borderBottom = "2px solid #72a7ff";
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.color = "#3367d6";
-	if (point == undefined){
-		return 0;
-	}else {
-		document.querySelectorAll(".bottom_bar_menu > div")[point].style.borderBottom = "1px solid #f4f4f4";
-		document.querySelectorAll(".bottom_bar_menu > div")[point].style.color = "#4b4b4b";
-		point = pointer;
-	}
+	
+	if (point == undefined) return 0;
+	
+	document.querySelectorAll(".bottom_bar_menu > div")[point].style.borderBottom = "1px solid #f4f4f4";
+	document.querySelectorAll(".bottom_bar_menu > div")[point].style.color = "#4b4b4b";
+	point = pointer;
 }
 
 // Это нужно что бы мой говнокод работал -Руслан
 point = 0;
 
 //запрос для получение и вывод собщений в слайдбаре
-sendRequest("messages.getConversations", { count: 16}, (data) => drawMessages(data.response.items));
-function drawMessages (message){
+sendRequest("messages.getConversations", { count: 200, extended: 1}, (data) => drawMessages(data.response));
+
+//функция рабоатет при получение response от верхнего запроса 
+function drawMessages(m){
 	var html = " ";
+	var message = m.items ;//array в котором хранятся last_message и Conversation
+
 	for (var i = 0, len = message.length; i < len; i++){
-		
 		// проверка собшений от беседы или от личной переписки
 		if (message[i].conversation.peer.type == "user"){	
 			var userId 			= message[i].conversation.peer.id;
-			var lastMessage 	= "message";
-			var unreadMessages 	= 2 ;
-			
-			sendRequest("users.get", {user_ids:userId, fields: 'photo_100'},(data) => drawUserMessageBar(data.response[0].first_name, data.response[0].last_name, data.response[0].photo_100)); 
-			function drawUserMessageBar(firstName,lastName,img){
-				name 		= firstName+" "+lastName ;
-				userImage  = img;
-				drawInHtml(name, userImage, lastMessage, unreadMessages);
+			var lastMessage 	= message[i].last_message.text;
+			var unreadMessages 	= (message[i].conversation.unread_count==undefined) ? "" : message[i].conversation.unread_count;
+
+			//m.profile array где хранятся профайлы юзеров, в цикл проверяется id 
+			for (var j = 0; j <  m.profiles.length; j++){
+				if (m.profiles[j].id  == userId ){
+					userName 		= m.profiles[j].first_name+" "+m.profiles[j].last_name ;
+					userImage 	= m.profiles[j].photo_100; 
+					
+					drawInHtml(userName, userImage, lastMessage, unreadMessages);
+				}
 			}
-		}else if(message[i].conversation.peer.type == "chat"){
+		}
+		
+		// проверка на беседу...
+		else if(message[i].conversation.peer.type == "chat"){
 			var chatName		= (message[i].conversation.chat_settings == undefined) ? "no_title" : message[i].conversation.chat_settings.title;
 			var chatImage 		= (message[i].conversation.chat_settings.photo == undefined) ? "img/noImageForChat.png" : message[i].conversation.chat_settings.photo.photo_100;  
 			var lastMessage 	= message[i].last_message.text;
 			var unreadMessages 	= (message[i].conversation.unread_count==undefined) ? "" : message[i].conversation.unread_count;
 		
 			drawInHtml(chatName, chatImage, lastMessage,unreadMessages);
-		}	
+		}
+		// функция ресует html для сайдбара 	
 		function drawInHtml(name, img, lastMessage, unreadMessages){
 			html += "<div class='side_bar_messages_container'>"
 			  		+ "<div>"
