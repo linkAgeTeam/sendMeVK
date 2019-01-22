@@ -26,7 +26,7 @@ function getUrl (method, params){
 
 	params = params || {}; // Проверка если параметры не переданы то преобразуем их в пустой обьект
 
-	params['access_token'] = "2a4d020dc0acf6ad8a333a7317d90540c0fa42d959600e485b40a471b0664b8590bc70b70a6d8ad3b204f";
+	params['access_token'] = "0b553ecec2c5616d7a25e3c6870e619ad9a554736f5ebb3e2a9b55575edec35e9fb4ad272f3fe5814d08b";
 	return 'https://api.vk.com/method/'+ method + '?' + $.param(params) + '&v=5.52';
 }
 // Функция создает запрос принимая название метода его параметры и функцию калбека при успешном выполнение

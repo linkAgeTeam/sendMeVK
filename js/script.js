@@ -3,7 +3,7 @@
 var state = setInterval(documentLoad, 100);
 var point;
 
-// Это нужно что бы при загрузке по умолчанию была открыта первая вкладка "Message"
+// Что бы при загрузке по умолчанию была открыта вкладка "Message"
 menu (0);  
 
 // Обрабатывает загрузку страницы и убирает лого
@@ -25,47 +25,80 @@ function menu (pointer){
 	document.querySelectorAll(".bottom_bar_menu > div")[point].style.color = "#4b4b4b";
 	point = pointer;
 }
-
-// Это нужно что бы мой говнокод работал -Руслан
 point = 0;
 
-//запрос для получение и вывод собщений в слайдбаре
-sendRequest("messages.getConversations", { count: 200, extended: 1}, (data) => drawMessages(data.response));
+// Запрос для получение и вывод собщений в сайдбаре
+sendRequest("messages.getConversations", { count: 15, extended: 1}, (data) => drawMessages(data.response));
 
-//функция рабоатет при получение response от верхнего запроса 
+// Функция рабоатет для получение response от верхнего запроса 
 function drawMessages(m){
 	var html = " ";
 	var message = m.items ;//array в котором хранятся last_message и Conversation
 
 	for (var i = 0, len = message.length; i < len; i++){
-		// проверка собшений от беседы или от личной переписки
 		if (message[i].conversation.peer.type == "user"){	
-			var userId 			= message[i].conversation.peer.id;
-			var lastMessage 	= message[i].last_message.text;
-			var unreadMessages 	= (message[i].conversation.unread_count==undefined) ? "" : message[i].conversation.unread_count;
+			var userId = message[i].conversation.peer.id;
+			var unreadMessages = (message[i].conversation.unread_count == undefined) ? "" : message[i].conversation.unread_count;
+			var style = message[i].conversation.unread_count == undefined ? "style='display: none'" : "style='display: block'";
+			message[i].last_message.text.length > 27 ? lastMessage = message[i].last_message.text.slice(0, 27) + '...' : lastMessage = message[i].last_message.text;
+
+  			var time = timeConverter(message[i].last_message.date);
 
 			//m.profile array где хранятся профайлы юзеров, в цикл проверяется id 
 			for (var j = 0; j <  m.profiles.length; j++){
-				if (m.profiles[j].id  == userId ){
-					userName 		= m.profiles[j].first_name+" "+m.profiles[j].last_name ;
-					userImage 	= m.profiles[j].photo_100; 
+				if (m.profiles[j].id  == userId){
+					userName = m.profiles[j].first_name + " " + m.profiles[j].last_name ;
+					userImage = m.profiles[j].photo_100; 
 					
-					drawInHtml(userName, userImage, lastMessage, unreadMessages);
+					drawInHtml(userName, userImage, lastMessage, unreadMessages, style, time);
 				}
 			}
 		}
-		
-		// проверка на беседу...
 		else if(message[i].conversation.peer.type == "chat"){
-			var chatName		= (message[i].conversation.chat_settings == undefined) ? "no_title" : message[i].conversation.chat_settings.title;
-			var chatImage 		= (message[i].conversation.chat_settings.photo == undefined) ? "img/noImageForChat.png" : message[i].conversation.chat_settings.photo.photo_100;  
-			var lastMessage 	= message[i].last_message.text;
-			var unreadMessages 	= (message[i].conversation.unread_count==undefined) ? "" : message[i].conversation.unread_count;
-		
-			drawInHtml(chatName, chatImage, lastMessage,unreadMessages);
+			var chatName = message[i].conversation.chat_settings == undefined ? "no_title" : message[i].conversation.chat_settings.title;
+			var chatImage = message[i].conversation.chat_settings.photo == undefined ? "img/noImageForChat.png" : message[i].conversation.chat_settings.photo.photo_100;  
+			var unreadMessages = message[i].conversation.unread_count == undefined ? "" : message[i].conversation.unread_count;
+			var style = message[i].conversation.unread_count == undefined ? "style='display: none'" : "style='display: block'";
+
+			message[i].last_message.text.length > 27 ? lastMessage = message[i].last_message.text.slice(0, 27) + '...' : lastMessage = message[i].last_message.text;
+
+  			var time = timeConverter(message[i].last_message.date);
+
+			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
+		}
+		else if (message[i].conversation.peer.type == "group") {
+			var chatName, chatImage, lastMessage, unreadMessages, style, time;
+
+			for (var k = 0; k < m.groups.length; k++) {
+				if (m.groups[k].id == message[i].conversation.peer.local_id) {
+					chatName = m.groups[k].name;
+					chatImage = m.groups[k].photo_100;
+				}
+			}
+			message[i].last_message.text.length > 27 ? lastMessage = message[i].last_message.text.slice(0, 27) + '...' : lastMessage = message[i].last_message.text;
+			unreadMessages = message[i].conversation.unread_count == undefined ? "" : message[i].conversation.unread_count;
+			var style = message[i].conversation.unread_count == undefined ? "style='display: none'" : "style='display: block'";
+
+			var time = timeConverter(message[i].last_message.date);
+
+			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
+		}
+		function timeConverter(UNIX_timestamp){
+  			var a = new Date(UNIX_timestamp * 1000);
+  			var b = new Date();
+  			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  			var year = a.getFullYear() == b.getFullYear() ? "" : a.getFullYear();
+  			var month = a.getMonth() == b.getMonth() ? "" : months[a.getMonth()];
+  			if (a.getDate() == b.getDate()) var date = "";
+  			else if (a.getDate() == (b.getDate() - 1)) var date = "yesterday";
+  			else var date = a.getDate();
+  			var hour = a.getHours();
+  			var min = a.getMinutes();
+  			var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min;
+  			return time;
 		}
 		// функция ресует html для сайдбара 	
-		function drawInHtml(name, img, lastMessage, unreadMessages){
+		function drawInHtml(name, img, lastMessage, unreadMessages, style, time){
 			html += "<div class='side_bar_messages_container'>"
 			  		+ "<div>"
 						+ "<img src='" + img + "'alt='img_conversation' />"
@@ -75,15 +108,14 @@ function drawMessages(m){
 						+ "<p>" + lastMessage+ "</p>"
 					+ "</div>"
 					+ "<div>"
-						+ "<p>" + unreadMessages+ "</p>"
-						+ "<p>" + "12:16" + "</P>"
+						+ "<p " + style + ">" + unreadMessages + "</p>"
+						+ "<p>" + time + "</P>"
 					+ "</div>"
 				+ "</div>";
-				$(".bottom_bar_content").html(html);
+			$(".bottom_bar_content").html(html);
 		}
 	}
 }
-
 // Показывает инфу о текущем юзере (сверху в сайдбаре)
 sendRequest ("users.get", {fields: 'photo_100,status'}, (data) => Draw_user_information(data.response[0]));
 function Draw_user_information (user){
@@ -93,8 +125,6 @@ function Draw_user_information (user){
 
 	$("#status").text(user.status);
 }
-
-
 // При клике на крест сворачивает сайдбар на мини сайдбар
 $("img[alt='remove']").on("click", function(){
 	$("aside").css("animation-name", "sidebarHide");
@@ -104,10 +134,15 @@ $("img[alt='remove']").on("click", function(){
 	$(".miniside").css("display", "flex");
 
 	setTimeout(() => $("aside").css("display", "none"), 1000);
-	//
+	
 	sendRequest('friends.search', {count: 50, fields: 'photo_100'}, (data) => drawFriends(data.response));
 	function drawFriends (friends){
 		var html = " ";
+
+		$("main").css({ "width": "calc(100vw - 80px)", "position": "relative", "left": "80px" });
+		$(".chat_information").css("width", "calc(100vw - 80px");
+		$(".chat_menu").css("width", "calc(100vw - 80px");
+		$(".chat_messege").css("width", "calc(100vw - 80px");
 
 		for (var i = 0; i < friends.items.length; i++)
 			html += "<li title='" + friends.items[i].first_name + ' ' + friends.items[i].last_name + "'>" 
@@ -117,15 +152,14 @@ $("img[alt='remove']").on("click", function(){
 		$(html).appendTo("#sidebar")
 	}
 });
-
 // При клике на лого меню разворачивает сайдбар
 $("img[alt='menu']").on("click", function(){
 	$(".miniside").css("display", "none");
-
 	$("aside").css("display", "flex");
-
 	$("aside").css("animation-name", "sidebarBack");
-
+	$(".chat_information").css("width", "calc(100vw - 370px");
+	$(".chat_menu").css("width", "calc(100vw - 370px");
+	$(".chat_messege").css("width", "calc(100vw - 370px");
 	setTimeout(() => $(".top_bottom_bar > div > input").css("display", "block"), 1000);
+	$("main").css({ "width": "calc(100vw - 370px)", "position": "relative", "left": "0px" });
 });
-
