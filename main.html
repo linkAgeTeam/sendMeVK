@@ -11,7 +11,7 @@
 </head>
 <body>
 	<div class="loadDocument">
-		<img src="img/logo.png" alt="logo">
+		<img src="img/loading.gif" alt="logo">
 	</div>
 	<aside>
 		<div class="top_bar">
@@ -38,11 +38,11 @@
 		<div class="middle_bar"></div>
 		<div class="bottom_bar">
 			<div class="bottom_bar_menu">
-				<div onclick="menu(0)"><p>Messages</p></div>
-				<div onclick="menu(1)"><p>Friends</p></div>
-				<div onclick="menu(2)"><p>Unread messages</p></div>
+				<div onclick="menu(0)" id="messageMenu"><p>Messages</p></div>
+				<div onclick="menu(1)" id="frindsMenu"><p>Friends</p></div>
+				<div onclick="menu(2)" id="unreadMessage"><p>Unread messages</p></div>
 			</div>
-			<div class="bottom_bar_content">
+			<div class="bottom_bar_content" id="sideBarContent" >
 						
 			</div>
 		</div>

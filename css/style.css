@@ -7,17 +7,18 @@ body {
 }
 .loadDocument {
 	position: absolute;
-	width: 100vw;
-	height: 100vh;
-	background-color: #fafafa;
+	width: 100%;
+	height: 100% ;
+	background-color: #DEDEDE;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	z-index: 1;
+
 }
 .loadDocument > img {
-	width: 100px;
-	height: 100px;
+	width: 75px;
+	height: 75px;
 }
 aside {
 	width: 370px;
@@ -224,6 +225,77 @@ aside {
 	overflow-y: auto;
 	height: calc(100vh - 257px);
 }
+/*for the frinds menu in side bar */
+.side_bar_friends_container {
+	display: flex;
+	width: 99%;
+	height: 80px;
+	background-color: white;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	cursor:pointer;
+	margin: auto;
+	border-bottom: 1px solid lightgray;
+}
+.side_bar_friends_container:hover {
+	background-color: lightblue;
+	transition: .6s;
+}
+.side_bar_friends_container > div {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	
+}
+.side_bar_friends_container > div > img {
+	height: 50px;
+	margin-left: 5px;
+	border-radius: 25px;
+}
+.side_bar_friends_container_block2 > p:first-child{
+	color: black;
+	font-size: 13px;
+	font-family: ProximaNova Regular;
+	margin-bottom: 14px;
+	align-self: self-start;
+}
+.side_bar_friends_container_block2 > p:last-child {
+	font-size: 13px;
+	color: #808080;
+	font-family: ProximaNova Regular;
+	align-self: self-start;
+	width: 221px;
+	height: 17px;
+	overflow-x: hidden;
+}
+.side_bar_friends_container_block2 {
+	width: 180px;
+}
+.side_bar_friends_container > div:last-child > p:first-child {
+	padding-top: 2px;
+	font-size: 14px;
+	color: white;
+	background-color: #37fc37;
+	font-family: ProximaNova Regular;
+	margin-bottom: 14px;
+	border:1px solid #37fc37;
+	width: 15px;
+	height: 13px;
+	border-radius: 25px;
+	text-align: center;
+}
+.side_bar_friends_container > div:last-child > p:last-child {
+	font-size: 12px;
+	color: #808080;
+	font-family: ProximaNova Regular;
+}
+.bottom_bar_content {
+	overflow-y: auto;
+	height: calc(100vh - 257px);
+}
+
+/*	**	*	**	*	**	*	**	*	**/
 .miniside {
 	display: none;
 	flex-direction: column;

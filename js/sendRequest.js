@@ -22,11 +22,13 @@
 
 // Функция принимает метод и его параметры и возврощяет url строку для http запроса
 function getUrl (method, params){
+	var rToken = "66ce4b0239e2bf41c8b0975fbfad81c119f1624fec0a95b887b78c691cd452008d4c02c9e7d4847617794";
+	var aToken = "2a4d020dc0acf6ad8a333a7317d90540c0fa42d959600e485b40a471b0664b8590bc70b70a6d8ad3b204f";
 	if (!method) throw new Error('You did not specify a method!'); // Если метод не был указан при вызове функций то будет создана ошибка
 
 	params = params || {}; // Проверка если параметры не переданы то преобразуем их в пустой обьект
 
-	params['access_token'] = "0b553ecec2c5616d7a25e3c6870e619ad9a554736f5ebb3e2a9b55575edec35e9fb4ad272f3fe5814d08b";
+	params['access_token'] = aToken;
 	return 'https://api.vk.com/method/'+ method + '?' + $.param(params) + '&v=5.52';
 }
 // Функция создает запрос принимая название метода его параметры и функцию калбека при успешном выполнение

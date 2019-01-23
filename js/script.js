@@ -18,19 +18,31 @@ function documentLoad(){
 function menu (pointer){
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.borderBottom = "2px solid #72a7ff";
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.color = "#3367d6";
-	
+
 	if (point == undefined) return 0;
-	
+
 	document.querySelectorAll(".bottom_bar_menu > div")[point].style.borderBottom = "1px solid #f4f4f4";
 	document.querySelectorAll(".bottom_bar_menu > div")[point].style.color = "#4b4b4b";
+	
+	//pointer = 0 при вслуче открыт первое меню сайдбара собщения 
+	if(pointer == 0){
+		$(".side_bar_messages_container").css("display","flex");
+		$(".side_bar_friends_container").css("display","none");
+	//Pinert = 1 открыт в сйдбаре 2 веню друзья 	
+	}else if(pointer == 1){
+		//скрывает сайдбар с собщенями
+		$(".side_bar_messages_container").css("display","none");
+		friendsMenu();
+	}	
 	point = pointer;
 }
-point = 0;
+	point = 0;// этот код нужен чтобы мой говно код работал - Руслан
 
 // Запрос для получение и вывод собщений в сайдбаре
-sendRequest("messages.getConversations", { count: 15, extended: 1}, (data) => drawMessages(data.response));
+sendRequest("messages.getConversations", { count: 20, extended: 1}, (data) => drawMessages(data.response));
 
 // Функция рабоатет для получение response от верхнего запроса 
+// так же ресуется вкладка собшения на слайдбаре
 function drawMessages(m){
 	var html = " ";
 	var message = m.items ;//array в котором хранятся last_message и Conversation
@@ -39,9 +51,8 @@ function drawMessages(m){
 		if (message[i].conversation.peer.type == "user"){	
 			var userId = message[i].conversation.peer.id;
 			var unreadMessages = (message[i].conversation.unread_count == undefined) ? "" : message[i].conversation.unread_count;
-			var style = message[i].conversation.unread_count == undefined ? "style='display: none'" : "style='display: block'";
-			message[i].last_message.text.length > 27 ? lastMessage = message[i].last_message.text.slice(0, 27) + '...' : lastMessage = message[i].last_message.text;
-
+			var style = (message[i].conversation.unread_count == undefined) ? "style='display: none'" : "style='display: block'";
+			var lastMessage = (message[i].last_message.text.length > 27) ? message[i].last_message.text.slice(0, 27) + '...' : message[i].last_message.text; 			
   			var time = timeConverter(message[i].last_message.date);
 
 			//m.profile array где хранятся профайлы юзеров, в цикл проверяется id 
@@ -66,19 +77,18 @@ function drawMessages(m){
 
 			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
 		}
-		else if (message[i].conversation.peer.type == "group") {
-			var chatName, chatImage, lastMessage, unreadMessages, style, time;
+		else if (message[i].conversation.peer.type == "group"){
+			var chatName, chatImage;
 
-			for (var k = 0; k < m.groups.length; k++) {
+			for (var k = 0; k < m.groups.length; k++){
 				if (m.groups[k].id == message[i].conversation.peer.local_id) {
 					chatName = m.groups[k].name;
 					chatImage = m.groups[k].photo_100;
 				}
 			}
-			message[i].last_message.text.length > 27 ? lastMessage = message[i].last_message.text.slice(0, 27) + '...' : lastMessage = message[i].last_message.text;
-			unreadMessages = message[i].conversation.unread_count == undefined ? "" : message[i].conversation.unread_count;
-			var style = message[i].conversation.unread_count == undefined ? "style='display: none'" : "style='display: block'";
-
+			var lastMessage = (message[i].last_message.text.length > 27) ? message[i].last_message.text.slice(0, 27) + '...' : message[i].last_message.text;
+			var unreadMessages = (message[i].conversation.unread_count == undefined) ? "" : message[i].conversation.unread_count;
+			var style = (message[i].conversation.unread_count == undefined) ? "style='display: none'" : "style='display: block'";
 			var time = timeConverter(message[i].last_message.date);
 
 			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
@@ -88,15 +98,26 @@ function drawMessages(m){
   			var b = new Date();
   			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   			var year = a.getFullYear() == b.getFullYear() ? "" : a.getFullYear();
-  			var month = a.getMonth() == b.getMonth() ? "" : months[a.getMonth()];
-  			if (a.getDate() == b.getDate()) var date = "";
-  			else if (a.getDate() == (b.getDate() - 1)) var date = "yesterday";
-  			else var date = a.getDate();
-  			var hour = a.getHours();
-  			var min = a.getMinutes();
-  			var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min;
+  			var month = months[a.getMonth()];
+  			
+  			//если собшения пришло сегодня то выводит только время собшения
+  			if (a.getDate() == b.getDate() && a.getMonth() == b.getMonth()){
+  				//var date = "";
+  				var hour = a.getHours();
+  				var min  = a.getMinutes();
+  				var time =  hour + ':' + min;	
+  			}// если оно пришло вчера то выводит только надпись вчера  
+  			else if (a.getDate() == (b.getDate() - 1) &&  a.getMonth() == b.getMonth()){
+  				var date = "yesterday";
+  				var time = 	date ;
+  			}// а если старое то только число и годб год в том случие если он не равен нашему году 
+  			else{ 
+  				var date = a.getDate();
+  				var time = date + ' ' + month + ' ' + year ;
+  			}
   			return time;
 		}
+
 		// функция ресует html для сайдбара 	
 		function drawInHtml(name, img, lastMessage, unreadMessages, style, time){
 			html += "<div class='side_bar_messages_container'>"
@@ -116,6 +137,87 @@ function drawMessages(m){
 		}
 	}
 }
+
+//функция для вызова список длрузей в сйдбаре пре клике 
+function friendsMenu(){	
+	//запрос по получению данных друзей с вк апи
+	sendRequest('friends.search', { count:15,fields: 'photo_100,status,online,last_seen' }, (data) => drawFriends(data.response));
+	
+	// метод отвеает на запрос и выводи список друзей...
+	function drawFriends(f){
+		var html = " ";
+		var name, userImage, status, online, lastSeen, style, time;
+		var friends = f.items;
+		for (var i = 0; i < f.items.length; i++){
+			userName  = friends[i].first_name + " "+ friends[i].last_name;
+			userImage = friends[i].photo_100;
+			userStatus = friends[i].status; 
+			online = friends[i].online;
+			lastSeen = friends[i].last_seen.time;
+			//если юзер онлайн то должно гореть только олайн 
+			if (online == 1) {
+				style = "style='display: block'";
+				online = '';
+				time = "";
+
+				//в этом месте находится дата последниего время онлайн оно скрыто если юзер онлайн
+				$(".side_bar_messages_container > div:last-child > p:last-child").css("display","none");
+			}else {
+				style = "style='display: none'";
+
+				//время последнего посишения
+				time  =  timeConverter(lastSeen);
+			}
+			drawInHtml(userName,userImage,userStatus,online, style, time);			
+
+
+		}
+		// метод для время ыремя из времини unixtime
+		function timeConverter(UNIX_timestamp){
+  			var a = new Date(UNIX_timestamp * 1000);
+  			var b = new Date();
+  			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  			var year = a.getFullYear() == b.getFullYear() ? "" : a.getFullYear();
+  			var month = months[a.getMonth()];
+  			
+  			//если собшения пришло сегодня то выводит только время собшения
+  			if (a.getDate() == b.getDate() && a.getMonth() == b.getMonth()){
+  				//var date = "";
+  				var hour = a.getHours();
+  				var min  = a.getMinutes();
+  				var time =  hour + ':' + min;	
+  			}// если оно пришло вчера то выводит только надпись вчера  
+  			else if (a.getDate() == (b.getDate() - 1) &&  a.getMonth() == b.getMonth()){
+  				var date = "yesterday";
+  				var time = 	date ;
+  			}// а если старое то только число и годб год в том случие если он не равен нашему году 
+  			else{ 
+  				var date = a.getDate();
+  				var time = date + ' ' + month + ' ' + year ;
+  			}
+  			return time;
+		}
+
+		// функция ресует html для сайдбара 	
+		function drawInHtml(name, img, status, online, style, lastSeenTime){
+			html += "<div class='side_bar_friends_container'>"
+			  		+ "<div>"
+						+ "<img src='" + img + "'alt='img_conversation' />"
+					+ "</div>"
+					+ "<div class='side_bar_friends_container_block2'>"
+						+ "<p>" + name + "</p>"
+						+ "<p>" + status+ "</p>"
+					+ "</div>"
+					+ "<div>"
+						+ "<p " + style + ">" + online + "</p>"
+						+ "<p>" + lastSeenTime + "</P>"
+					+ "</div>"
+				+ "</div>";
+			$(".bottom_bar_content").html(html);
+		}
+	}	
+}
+
 // Показывает инфу о текущем юзере (сверху в сайдбаре)
 sendRequest ("users.get", {fields: 'photo_100,status'}, (data) => Draw_user_information(data.response[0]));
 function Draw_user_information (user){
@@ -149,7 +251,7 @@ $("img[alt='remove']").on("click", function(){
 				+ "<img src=" + friends.items[i].photo_100 + "/>" 
 			+ "</li>";
 
-		$(html).appendTo("#sidebar")
+		$(html).appendTo("#sidebar");
 	}
 });
 // При клике на лого меню разворачивает сайдбар
