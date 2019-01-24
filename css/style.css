@@ -75,6 +75,8 @@ aside {
 	font-size: 16px;
 	color: white;
 	margin-left: 15px;
+	position: relative;
+	top: 20px;
 }
 #status {
 	font-family: ProximaNova Light;
@@ -83,9 +85,21 @@ aside {
 	margin-left: 15px;
 	margin-top: 10px;
 }
+#state_this_user {
+	width: 12px;
+	position: relative;
+	right: 15px;
+	top: 20px;
+}
 .top_middle_bar > div:last-child {
 	align-self: end;
 	margin-bottom: 30px;
+}
+.top_middle_bar > div:last-child > form > input {
+	background-color: inherit;
+	border: none;
+	margin-left: 15px;
+	color: white;
 }
 .top_bottom_bar {
 	height: 46px;
@@ -276,10 +290,8 @@ aside {
 	padding-top: 2px;
 	font-size: 14px;
 	color: white;
-	background-color: #37fc37;
 	font-family: ProximaNova Regular;
 	margin-bottom: 14px;
-	border:1px solid #37fc37;
 	width: 15px;
 	height: 13px;
 	border-radius: 25px;
@@ -331,6 +343,7 @@ img[alt='menu'] {
 	width: 20px;
 	cursor: pointer;
 }
+
 /* The main block */
 
 
@@ -472,6 +485,60 @@ img[alt='Attach file'], img[alt='Emoticon'] {
 	font-family: ProximaNova Regular;
 	margin-left: 15px;
 }
+
+
+/* Frients sidebar */
+
+#status_user {
+	width: 10px;
+	position: relative;
+	right: 15px;
+	bottom: 1px;
+}
+.friends_content {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	border-bottom: 2px whitesmoke solid;
+	width: 100%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.friends_content > div:first-child > img:first-child {
+    width: 50px;
+    border-radius: 30px;
+    margin-left: 10px;
+}
+.friends_content > div + div > p:last-child {
+	font-size: 13px;
+	color: gray;
+	font-family: ProximaNova Regular;
+}
+.friends_content > div:first-child + div {
+	margin-left: 15px;
+	width: 180px;
+	height: 35px;
+	overflow: hidden;
+}
+.friends_content > div ~ div > p:first-child{
+	color: black;
+	font-family: ProximaNova Regular;
+	color: #787878;
+	font-size: 13px;
+}
+.friends_content > div:last-child {
+	align-self: baseline;
+	margin-top: 10px;
+}
+.friends_content > div {
+	cursor: pointer;
+}
+
+
+
+
+
+
 
 
 /*///// Animation /////*/

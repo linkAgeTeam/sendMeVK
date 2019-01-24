@@ -25,6 +25,10 @@
 				<div>
 					<p id="name_user"></p>
 					<p id="status"></p>
+					<img src='img/status_desctop.png' alt='status' id="state_this_user">
+					<form action="" method="get" id="status_form" onsubmit="setStatus(); return false;">
+						<input type="text" id="status_input">
+					</form>
 				</div>
 			</div>
 			<div class="top_bottom_bar">
@@ -43,7 +47,7 @@
 				<div onclick="menu(2)" id="unreadMessage"><p>Unread messages</p></div>
 			</div>
 			<div class="bottom_bar_content" id="sideBarContent" >
-						
+				
 			</div>
 		</div>
 	</aside>

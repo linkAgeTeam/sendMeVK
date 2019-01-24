@@ -1,4 +1,4 @@
-//https://oauth.vk.com/authorize?client_id=6818569&display=page&scope=friends,messages,offline&response_type=token&v=5.52
+//https://oauth.vk.com/authorize?client_id=6818569&display=page&scope=friends,status,messages,offline&response_type=token&v=5.52
 
 var state = setInterval(documentLoad, 100);
 var point;
@@ -19,27 +19,27 @@ function menu (pointer){
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.borderBottom = "2px solid #72a7ff";
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.color = "#3367d6";
 
-	if (point == undefined) return 0;
+	if (point == undefined) { point = pointer; sendRequest("messages.getConversations", { count: 20, extended: 1}, (data) => drawMessages(data.response)); return 0; }
 
 	document.querySelectorAll(".bottom_bar_menu > div")[point].style.borderBottom = "1px solid #f4f4f4";
 	document.querySelectorAll(".bottom_bar_menu > div")[point].style.color = "#4b4b4b";
-	
-	//pointer = 0 при вслуче открыт первое меню сайдбара собщения 
-	if(pointer == 0){
+
+	point = pointer;
+
+	if (pointer == 0){
 		$(".side_bar_messages_container").css("display","flex");
 		$(".side_bar_friends_container").css("display","none");
-	//Pinert = 1 открыт в сйдбаре 2 веню друзья 	
-	}else if(pointer == 1){
-		//скрывает сайдбар с собщенями
+		sendRequest("messages.getConversations", { count: 20, extended: 1}, (data) => drawMessages(data.response));
+	}
+	else if (pointer == 1){
 		$(".side_bar_messages_container").css("display","none");
+		$(".side_bar_friends_container").css("display","flex");
 		friendsMenu();
-	}	
-	point = pointer;
+	}
 }
-	point = 0;// этот код нужен чтобы мой говно код работал - Руслан
 
 // Запрос для получение и вывод собщений в сайдбаре
-sendRequest("messages.getConversations", { count: 20, extended: 1}, (data) => drawMessages(data.response));
+//sendRequest("messages.getConversations", { count: 20, extended: 1}, (data) => drawMessages(data.response));
 
 // Функция рабоатет для получение response от верхнего запроса 
 // так же ресуется вкладка собшения на слайдбаре
@@ -139,38 +139,55 @@ function drawMessages(m){
 }
 
 //функция для вызова список длрузей в сйдбаре пре клике 
-function friendsMenu(){	
-	//запрос по получению данных друзей с вк апи
-	sendRequest('friends.search', { count:15,fields: 'photo_100,status,online,last_seen' }, (data) => drawFriends(data.response));
+function friendsMenu (){	
 	
-	// метод отвеает на запрос и выводи список друзей...
-	function drawFriends(f){
+	sendRequest('friends.search', { count: 200, fields: 'photo_100,status,online,last_seen' }, (data) => drawFriends(data.response));
+	
+	function drawFriends (f){
 		var html = " ";
-		var name, userImage, status, online, lastSeen, style, time;
+		var name, userImage, status, online, lastSeen, style, time, stat;
 		var friends = f.items;
+
 		for (var i = 0; i < f.items.length; i++){
 			userName  = friends[i].first_name + " "+ friends[i].last_name;
 			userImage = friends[i].photo_100;
-			userStatus = friends[i].status; 
 			online = friends[i].online;
 			lastSeen = friends[i].last_seen.time;
-			//если юзер онлайн то должно гореть только олайн 
+			friends[i].status.length > 27 ? status = friends[i].status.slice(0, 27) + "..." : status = friends[i].status; 
+			
 			if (online == 1) {
-				style = "style='display: block'";
-				online = '';
 				time = "";
+				stat = "<img src='img/status_desctop.png' alt='status' id='status_user'>";
+				style = "online";
 
 				//в этом месте находится дата последниего время онлайн оно скрыто если юзер онлайн
 				$(".side_bar_messages_container > div:last-child > p:last-child").css("display","none");
-			}else {
-				style = "style='display: none'";
-
+			}
+			else {
+				stat = "";
 				//время последнего посишения
 				time  =  timeConverter(lastSeen);
+				style = "was at ";
 			}
-			drawInHtml(userName,userImage,userStatus,online, style, time);			
+			drawInHtml(userName, userImage, status, style, time, stat);			
+		}
+		// функция ресует html для сайдбара 	
+		function drawInHtml(name, img, status, style, lastSeenTime, state){
+			html += "<div class='friends_content'>"
+			  		+ "<div>"
+						+ "<img src='" + img + "'alt='img_conversation' />"
+						+ state 
+					+ "</div>"
+					+ "<div>"
+						+ "<p style='color: black'>" + name + "</p>"
+						+ "<p>" + status + "</p>"
+					+ "</div>"
+					+ "<div>"
+						+ "<p>" + style + lastSeenTime + "</P>"
+					+ "</div>"
+				+ "</div>";
 
-
+			$(".bottom_bar_content").html(html);
 		}
 		// метод для время ыремя из времини unixtime
 		function timeConverter(UNIX_timestamp){
@@ -197,24 +214,6 @@ function friendsMenu(){
   			}
   			return time;
 		}
-
-		// функция ресует html для сайдбара 	
-		function drawInHtml(name, img, status, online, style, lastSeenTime){
-			html += "<div class='side_bar_friends_container'>"
-			  		+ "<div>"
-						+ "<img src='" + img + "'alt='img_conversation' />"
-					+ "</div>"
-					+ "<div class='side_bar_friends_container_block2'>"
-						+ "<p>" + name + "</p>"
-						+ "<p>" + status+ "</p>"
-					+ "</div>"
-					+ "<div>"
-						+ "<p " + style + ">" + online + "</p>"
-						+ "<p>" + lastSeenTime + "</P>"
-					+ "</div>"
-				+ "</div>";
-			$(".bottom_bar_content").html(html);
-		}
 	}	
 }
 
@@ -225,8 +224,14 @@ function Draw_user_information (user){
 
 	$("#name_user").text(user.first_name + ' ' + user.last_name);
 
-	$("#status").text(user.status);
+	$("#status_input").attr("value", user.status);
 }
+function setStatus () {
+	sendRequest("status.set", {text: document.querySelector("#status_input").value }, function (data) {
+		if(data.response != 1) throw new Error (data.error.error_msg)});
+	return false;
+}
+
 // При клике на крест сворачивает сайдбар на мини сайдбар
 $("img[alt='remove']").on("click", function(){
 	$("aside").css("animation-name", "sidebarHide");
