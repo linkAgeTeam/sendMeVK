@@ -125,7 +125,8 @@ aside {
 	font-size: 13px;
 	font-family: ProximaNova Regular;
 	color: #b3cefb;
-	margin-left: 15px;
+	margin-left: 5px;
+	padding: 3px 35px;
 }
 .top_bottom_bar > div > img {
 	cursor: pointer;
