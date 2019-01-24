@@ -54,8 +54,9 @@ function drawMessages(m){
 			var style = (message[i].conversation.unread_count == undefined) ? "style='display: none'" : "style='display: block'";
 			var lastMessage = (message[i].last_message.text.length > 27) ? message[i].last_message.text.slice(0, 27) + '...' : message[i].last_message.text; 			
   			var time = timeConverter(message[i].last_message.date);
-
-			//m.profile array где хранятся профайлы юзеров, в цикл проверяется id 
+  			var messageType = (message[i].last_message.attachments[0] == undefined)?"notFound":lastMessage = "[ "+message[i].last_message.attachments[0].type+" ]" ;
+  			
+  			//m.profile array где хранятся профайлы юзеров, в цикл проверяется id 
 			for (var j = 0; j <  m.profiles.length; j++){
 				if (m.profiles[j].id  == userId){
 					userName = m.profiles[j].first_name + " " + m.profiles[j].last_name ;
@@ -70,9 +71,8 @@ function drawMessages(m){
 			var chatImage = message[i].conversation.chat_settings.photo == undefined ? "img/noImageForChat.png" : message[i].conversation.chat_settings.photo.photo_100;  
 			var unreadMessages = message[i].conversation.unread_count == undefined ? "" : message[i].conversation.unread_count;
 			var style = message[i].conversation.unread_count == undefined ? "style='display: none'" : "style='display: block'";
-
-			message[i].last_message.text.length > 27 ? lastMessage = message[i].last_message.text.slice(0, 27) + '...' : lastMessage = message[i].last_message.text;
-
+			var lastMessage = (message[i].last_message.text.length > 27) ? message[i].last_message.text.slice(0, 27) + '...' : message[i].last_message.text;
+			var messageType = (message[i].last_message.attachments[0] == undefined)?"notFound":lastMessage = "[ "+message[i].last_message.attachments[0].type+" ]" ;
   			var time = timeConverter(message[i].last_message.date);
 
 			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
@@ -90,7 +90,8 @@ function drawMessages(m){
 			var unreadMessages = (message[i].conversation.unread_count == undefined) ? "" : message[i].conversation.unread_count;
 			var style = (message[i].conversation.unread_count == undefined) ? "style='display: none'" : "style='display: block'";
 			var time = timeConverter(message[i].last_message.date);
-
+			var messageType = (message[i].last_message.attachments[0] == undefined)?"notFound":lastMessage = "[ "+message[i].last_message.attachments[0].type+" ]" ;
+			
 			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
 		}
 		function timeConverter(UNIX_timestamp){
@@ -145,7 +146,7 @@ function friendsMenu (){
 	
 	function drawFriends (f){
 		var html = " ";
-		var name, userImage, status, online, lastSeen, style, time, stat;
+		var name, userImage, status, online, lastSeen, time, stat, textBeforeLastSeen;
 		var friends = f.items;
 
 		for (var i = 0; i < f.items.length; i++){
@@ -158,7 +159,7 @@ function friendsMenu (){
 			if (online == 1) {
 				time = "";
 				stat = "<img src='img/status_desctop.png' alt='status' id='status_user'>";
-				style = "online";
+				textBeforeLastSeen = "online";
 
 				//в этом месте находится дата последниего время онлайн оно скрыто если юзер онлайн
 				$(".side_bar_messages_container > div:last-child > p:last-child").css("display","none");
@@ -167,12 +168,12 @@ function friendsMenu (){
 				stat = "";
 				//время последнего посишения
 				time  =  timeConverter(lastSeen);
-				style = "was at ";
+				textBeforeLastSeen = "was at ";
 			}
-			drawInHtml(userName, userImage, status, style, time, stat);			
+			drawInHtml(userName, userImage, status, textBeforeLastSeen, time, stat);			
 		}
 		// функция ресует html для сайдбара 	
-		function drawInHtml(name, img, status, style, lastSeenTime, state){
+		function drawInHtml(name, img, status, textBeforeLastSeen, lastSeenTime, state){
 			html += "<div class='friends_content'>"
 			  		+ "<div>"
 						+ "<img src='" + img + "'alt='img_conversation' />"
@@ -183,7 +184,7 @@ function friendsMenu (){
 						+ "<p>" + status + "</p>"
 					+ "</div>"
 					+ "<div>"
-						+ "<p>" + style + lastSeenTime + "</P>"
+						+ "<p>" + textBeforeLastSeen + lastSeenTime + "</P>"
 					+ "</div>"
 				+ "</div>";
 
@@ -226,6 +227,8 @@ function Draw_user_information (user){
 
 	$("#status_input").attr("value", user.status);
 }
+
+//метод для обновленмя статуса
 function setStatus () {
 	sendRequest("status.set", {text: document.querySelector("#status_input").value }, function (data) {
 		if(data.response != 1) throw new Error (data.error.error_msg)});
@@ -259,6 +262,7 @@ $("img[alt='remove']").on("click", function(){
 		$(html).appendTo("#sidebar");
 	}
 });
+
 // При клике на лого меню разворачивает сайдбар
 $("img[alt='menu']").on("click", function(){
 	$(".miniside").css("display", "none");
