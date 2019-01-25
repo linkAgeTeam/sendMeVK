@@ -79,7 +79,7 @@ function drawMessages(m){
   			var messageType;
   			if (message[i].last_message.fwd_messages.length != 0) lastMessage = message[i].last_message.fwd_messages.length + " messages";
   			if (message[i].last_message.attachments[0] == undefined && message[i].last_message.action == undefined) messageType = "notfound";
-  			else if (message[i].last_message.action != undefined) lastMessage ="[ " + message[i].last_message.action.type + " ]";
+  			else if (message[i].last_message.action != undefined) lastMessage =" [ " + message[i].last_message.action.type + " ]";
   			else lastMessage = "[ "+ message[i].last_message.attachments[0].type + " ]" + " " + message[i].last_message.text;
 
 			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
@@ -136,7 +136,7 @@ function drawMessages(m){
 					+ "</div>"
 					+ "<div class='side_bar_messages_container_block2'>"
 						+ "<p>" + name + "</p>"
-						+ "<p>" + lastMessage+ "</p>"
+						+ "<p>" + lastMessage + "</p>"
 					+ "</div>"
 					+ "<div>"
 						+ "<p " + style + ">" + unreadMessages + "</p>"
