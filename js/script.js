@@ -152,7 +152,7 @@ function messagesMenu(){
 //функция для вызова список длрузей в сйдбаре при клике 
 function friendsMenu (){	
 	
-	sendRequest('friends.search', { count: 200, fields: 'photo_100,status,online,last_seen' }, (data) => drawFriends(data.response));
+	sendRequest('friends.search', { count: 20, fields: 'photo_100,status,online,last_seen' }, (data) => drawFriends(data.response));
 	
 	function drawFriends (f){
 		var html = " ";
@@ -163,9 +163,16 @@ function friendsMenu (){
 			userName  = friends[i].first_name + " "+ friends[i].last_name;
 			userImage = friends[i].photo_100;
 			online = friends[i].online;
-			lastSeen = friends[i].last_seen.time;
-			friends[i].status.length > 27 ? status = friends[i].status.slice(0, 27) + "..." : status = friends[i].status; 
-			
+			lastSeen = (friends[i].last_seen == undefined)? "" : friends[i].last_seen.time;
+			//ставим значения стаутсу в вк
+			if (friends[i].status != undefined && friends[i].status.length > 27){
+				status = friends[i].status.slice(0, 27) + "..." ;
+			}else if (friends[i].status == undefined){
+				status = "";
+			}else{
+				status = friends[i].status;
+			}
+
 			if (online == 1) {
 				time = "";
 				stat = "<img src='img/status_desctop.png' alt='status' id='status_user'>";
