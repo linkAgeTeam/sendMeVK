@@ -52,9 +52,12 @@ function drawMessages(m){
 			var userId = message[i].conversation.peer.id;
 			var unreadMessages = (message[i].conversation.unread_count == undefined) ? "" : message[i].conversation.unread_count;
 			var style = (message[i].conversation.unread_count == undefined) ? "style='display: none'" : "style='display: block'";
-			var lastMessage = (message[i].last_message.text.length > 27) ? message[i].last_message.text.slice(0, 27) + '...' : message[i].last_message.text; 			
+			var lastMessage = message[i].last_message.text; 			
   			var time = timeConverter(message[i].last_message.date);
-  			var messageType = (message[i].last_message.attachments[0] == undefined)?"notFound":lastMessage = "[ "+message[i].last_message.attachments[0].type+" ]" ;
+  			var messageType;
+  			if (message[i].last_message.fwd_messages.length != 0) lastMessage = message[i].last_message.fwd_messages.length + " messages";
+  			else if (message[i].last_message.attachments[0] == undefined) messageType = "notFound";
+  			else lastMessage = "[ "+ message[i].last_message.attachments[0].type + " ]" + " " + message[i].last_message.text;
   			
   			//m.profile array где хранятся профайлы юзеров, в цикл проверяется id 
 			for (var j = 0; j <  m.profiles.length; j++){
@@ -71,9 +74,13 @@ function drawMessages(m){
 			var chatImage = message[i].conversation.chat_settings.photo == undefined ? "img/noImageForChat.png" : message[i].conversation.chat_settings.photo.photo_100;  
 			var unreadMessages = message[i].conversation.unread_count == undefined ? "" : message[i].conversation.unread_count;
 			var style = message[i].conversation.unread_count == undefined ? "style='display: none'" : "style='display: block'";
-			var lastMessage = (message[i].last_message.text.length > 27) ? message[i].last_message.text.slice(0, 27) + '...' : message[i].last_message.text;
-			var messageType = (message[i].last_message.attachments[0] == undefined)?"notFound":lastMessage = "[ "+message[i].last_message.attachments[0].type+" ]" ;
+			var lastMessage = message[i].last_message.text;			
   			var time = timeConverter(message[i].last_message.date);
+  			var messageType;
+  			if (message[i].last_message.fwd_messages.length != 0) lastMessage = message[i].last_message.fwd_messages.length + " messages";
+  			if (message[i].last_message.attachments[0] == undefined && message[i].last_message.action == undefined) messageType = "notfound";
+  			else if (message[i].last_message.action != undefined) lastMessage ="[ " + message[i].last_message.action.type + " ]";
+  			else lastMessage = "[ "+ message[i].last_message.attachments[0].type + " ]" + " " + message[i].last_message.text;
 
 			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
 		}
@@ -86,14 +93,17 @@ function drawMessages(m){
 					chatImage = m.groups[k].photo_100;
 				}
 			}
-			var lastMessage = (message[i].last_message.text.length > 27) ? message[i].last_message.text.slice(0, 27) + '...' : message[i].last_message.text;
+			var lastMessage = message[i].last_message.text;
 			var unreadMessages = (message[i].conversation.unread_count == undefined) ? "" : message[i].conversation.unread_count;
 			var style = (message[i].conversation.unread_count == undefined) ? "style='display: none'" : "style='display: block'";
 			var time = timeConverter(message[i].last_message.date);
-			var messageType = (message[i].last_message.attachments[0] == undefined)?"notFound":lastMessage = "[ "+message[i].last_message.attachments[0].type+" ]" ;
-			
+			if (message[i].last_message.fwd_messages.length != 0) lastMessage = message[i].last_message.fwd_messages.length + " messages";
+  			else if (message[i].last_message.attachments[0] == undefined) messageType = "notFound";
+  			else lastMessage = "[ "+ message[i].last_message.attachments[0].type + " ]" + " " + message[i].last_message.text;
+
 			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
 		}
+		else new Error ("there is no support for this type of message yet");
 		function timeConverter(UNIX_timestamp){
   			var a = new Date(UNIX_timestamp * 1000);
   			var b = new Date();
@@ -112,13 +122,12 @@ function drawMessages(m){
   				var date = "yesterday";
   				var time = 	date ;
   			}// а если старое то только число и годб год в том случие если он не равен нашему году 
-  			else{ 
+  			else { 
   				var date = a.getDate();
   				var time = date + ' ' + month + ' ' + year ;
   			}
   			return time;
 		}
-
 		// функция ресует html для сайдбара 	
 		function drawInHtml(name, img, lastMessage, unreadMessages, style, time){
 			html += "<div class='side_bar_messages_container'>"
@@ -190,7 +199,6 @@ function friendsMenu (){
 
 			$(".bottom_bar_content").html(html);
 		}
-		// метод для время ыремя из времини unixtime
 		function timeConverter(UNIX_timestamp){
   			var a = new Date(UNIX_timestamp * 1000);
   			var b = new Date();
@@ -227,7 +235,6 @@ function Draw_user_information (user){
 
 	$("#status_input").attr("value", user.status);
 }
-
 //метод для обновленмя статуса
 function setStatus () {
 	sendRequest("status.set", {text: document.querySelector("#status_input").value }, function (data) {
@@ -262,7 +269,6 @@ $("img[alt='remove']").on("click", function(){
 		$(html).appendTo("#sidebar");
 	}
 });
-
 // При клике на лого меню разворачивает сайдбар
 $("img[alt='menu']").on("click", function(){
 	$(".miniside").css("display", "none");
