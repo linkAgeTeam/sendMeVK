@@ -72,7 +72,7 @@ function drawMessages(m){
 			var unreadMessages = message[i].conversation.unread_count == undefined ? "" : message[i].conversation.unread_count;
 			var style = message[i].conversation.unread_count == undefined ? "style='display: none'" : "style='display: block'";
 			var lastMessage = (message[i].last_message.text.length > 27) ? message[i].last_message.text.slice(0, 27) + '...' : message[i].last_message.text;
-			var messageType = (message[i].last_message.attachments[0] == undefined)?"notFound":lastMessage = "[ "+message[i].last_message.attachments[0].type+" ]" ;
+			var messageType = (message[i].last_message.attachments[0] == undefined) ? "notFound" : lastMessage = "[ "+message[i].last_message.attachments[0].type+" ]" ;
   			var time = timeConverter(message[i].last_message.date);
 
 			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
@@ -91,7 +91,7 @@ function drawMessages(m){
 			var style = (message[i].conversation.unread_count == undefined) ? "style='display: none'" : "style='display: block'";
 			var time = timeConverter(message[i].last_message.date);
 			var messageType = (message[i].last_message.attachments[0] == undefined)?"notFound":lastMessage = "[ "+message[i].last_message.attachments[0].type+" ]" ;
-			
+
 			drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
 		}
 		function timeConverter(UNIX_timestamp){
