@@ -13,7 +13,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 1;
+	z-index: 2;
 
 }
 .loadDocument > img {
@@ -213,7 +213,7 @@ aside {
 	font-family: ProximaNova Regular;
 	align-self: self-start;
 	width: 221px;
-	height: 16px;
+	height: 19px;
 	overflow-x: hidden;
 }
 .side_bar_messages_container_block2 {
@@ -367,6 +367,7 @@ main {
 	align-items: center;
 	justify-content: space-between;
 	box-shadow: 6px 10px 12px #e7e7e7;
+	z-index: 1;
 }
 .chat_information > p {
 	color: black;
@@ -394,6 +395,7 @@ main {
 	align-items: center;
 	border-bottom: 2px solid #fbfcfc;
 	top: 85px;
+	z-index: 1;
 }
 .chat_menu > div:first-child > p {
 	margin-left: 30px;
@@ -539,6 +541,70 @@ img[alt='Attach file'] {
 	position: relative;
 }
 
+/* Message history */
+
+.message_history {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	top: 142px;
+	width: 100%;
+	height: calc(100vh - 260px);
+}
+.message_history > div {
+	display: flex;
+	flex-direction: row;
+	align-items: end;
+	margin: 25px 0px;
+}
+.this_user_message > div {
+	display: flex;
+	flex-direction: column;
+	align-items: end;
+}
+.notThis_user_message > div {
+	display: flex;
+	flex-direction: column;
+}
+.this_user_message {
+	align-self: end;
+	margin-right: 30px !important;
+}
+.notThis_user_message {
+	align-self: flex-start;
+	margin-left: 30px !important;
+}
+.this_user_message > div > .message_text {
+	margin-right: 10px;
+}
+.notThis_user_message > div > .message_text {
+	margin-left: 10px;
+}
+.this_user_message > div > .message_time {
+	margin-right: 10px;
+	color: #a9a9a9;
+	font-size: 12px;
+	font-family: ProximaNova Regular;
+}
+.notThis_user_message > div > .message_time {
+	margin-left: 10px;
+	color: #a9a9a9;
+	font-size: 12px;
+	font-family: ProximaNova Regular;
+}
+img[alt='icon_user'] {
+	width: 50px;
+	height: 50px;
+	border-radius: 35px;
+}
+.message_text {
+	background-color: #cdeafc;
+	padding-top: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	border-radius: 3px;
+}
 
 
 

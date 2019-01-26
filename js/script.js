@@ -57,7 +57,7 @@ function messagesMenu(){
 	  			var messageType;
 	  			if (message[i].last_message.fwd_messages.length != 0) lastMessage = message[i].last_message.fwd_messages.length + " messages";
 	  			else if (message[i].last_message.attachments[0] == undefined) messageType = "notFound";
-	  			else lastMessage = "[ "+ message[i].last_message.attachments[0].type + " ]" + " " + message[i].last_message.text;
+	  			else lastMessage = "<span style='color: #4285f4; font-size: 14px'> [ "+ message[i].last_message.attachments[0].type + " ]</span>" + " " + message[i].last_message.text;
 	  			
 	  			//m.profile array где хранятся профайлы юзеров, в цикл проверяется id 
 				for (var j = 0; j <  m.profiles.length; j++){
@@ -79,8 +79,8 @@ function messagesMenu(){
 	  			var messageType;
 	  			if (message[i].last_message.fwd_messages.length != 0) lastMessage = message[i].last_message.fwd_messages.length + " messages";
 	  			if (message[i].last_message.attachments[0] == undefined && message[i].last_message.action == undefined) messageType = "notfound";
-	  			else if (message[i].last_message.action != undefined) lastMessage =" [ " + message[i].last_message.action.type + " ]";
-	  			else lastMessage = "[ "+ message[i].last_message.attachments[0].type + " ]" + " " + message[i].last_message.text;
+	  			else if (message[i].last_message.action != undefined) lastMessage = "<span style='color: #b82626; font-size: 14px'> [ " + message[i].last_message.action.type + " ]</span>";
+	  			else lastMessage = "<span style='color: #4285f4; font-size: 14px'> [ " + message[i].last_message.attachments[0].type + " ]</span>" + " " + message[i].last_message.text;
 
 				drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
 			}
@@ -99,7 +99,7 @@ function messagesMenu(){
 				var time = timeConverter(message[i].last_message.date);
 				if (message[i].last_message.fwd_messages.length != 0) lastMessage = message[i].last_message.fwd_messages.length + " messages";
 	  			else if (message[i].last_message.attachments[0] == undefined) messageType = "notFound";
-	  			else lastMessage = "[ "+ message[i].last_message.attachments[0].type + " ]" + " " + message[i].last_message.text;
+	  			else lastMessage = "<span style='color: #4285f4; font-size: 14px'> [ "+ message[i].last_message.attachments[0].type + " ]</span>" + " " + message[i].last_message.text;
 
 				drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
 			}
