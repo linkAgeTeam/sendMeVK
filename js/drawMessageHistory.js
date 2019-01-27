@@ -1,15 +1,18 @@
 window.onload = () => $(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
 
-function drawMessageHistory (chatId)
-{
-	var thisUserId, thisUserImg, thisUserName;
+
+function drawMessageHistory (chatId){
+	var thisUserId, thisUserImg, thisUserName, chatName;
+
+	chatName = document.getElementById("chatName");
+	chatName.innerHTML = chatId[0].ownerElement.children[1].children[0].innerHTML;
+
 	sendRequest("users.get", {fields: 'photo_50'}, (data) => getThisUser(data.response[0]));
 	function getThisUser(thisUser) { thisUserId = thisUser.id; thisUserImg = thisUser.photo_50; thisUserName = thisUser.first_name + " " + thisUser.last_name; }
 
-	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 200, extended: 1}, (data) => renderMessageHistory(data.response));
+	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 100, extended: 1}, (data) => renderMessageHistory(data.response));
 
-	function renderMessageHistory (m)
-	{
+	function renderMessageHistory (m){
 		var item = m.items.reverse();
 		var userImg, userName, timeMessage, textMessage;
 		var html = "";
@@ -29,7 +32,7 @@ function drawMessageHistory (chatId)
 			}
 			timeMessage = timeConverter(item[i].date);
 			textMessage = item[i].body;
-
+			
 			if (thisUserId ==  item[i].from_id)
 				html += "<div class='" + "this_user_message" + "' title='" + userName + "'>"
 					+ "<div>"
