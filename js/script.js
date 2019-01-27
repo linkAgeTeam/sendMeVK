@@ -54,7 +54,6 @@ function messagesMenu(){
 				var style = (message[i].conversation.unread_count == undefined) ? "style='display: none'" : "style='display: block'";
 				var lastMessage = message[i].last_message.text; 			
 	  			var time = timeConverter(message[i].last_message.date);
-	  			var messageType;
 	  			if (message[i].last_message.fwd_messages.length != 0) lastMessage = message[i].last_message.fwd_messages.length + " messages";
 	  			else if (message[i].last_message.attachments[0] == undefined) messageType = "notFound";
 	  			else lastMessage = "<span style='color: #4285f4; font-size: 14px'> [ "+ message[i].last_message.attachments[0].type + " ]</span>" + " " + message[i].last_message.text;
@@ -65,7 +64,7 @@ function messagesMenu(){
 						userName = m.profiles[j].first_name + " " + m.profiles[j].last_name ;
 						userImage = m.profiles[j].photo_100; 
 						
-						drawInHtml(userName, userImage, lastMessage, unreadMessages, style, time);
+						drawInHtml(userName, userImage, lastMessage, unreadMessages, style, time, userId);
 					}
 				}
 			}
@@ -76,13 +75,14 @@ function messagesMenu(){
 				var style = message[i].conversation.unread_count == undefined ? "style='display: none'" : "style='display: block'";
 				var lastMessage = message[i].last_message.text;			
 	  			var time = timeConverter(message[i].last_message.date);
+	  			var chatId = message[i].conversation.peer.id;
 	  			var messageType;
 	  			if (message[i].last_message.fwd_messages.length != 0) lastMessage = message[i].last_message.fwd_messages.length + " messages";
 	  			if (message[i].last_message.attachments[0] == undefined && message[i].last_message.action == undefined) messageType = "notfound";
 	  			else if (message[i].last_message.action != undefined) lastMessage = "<span style='color: #b82626; font-size: 14px'> [ " + message[i].last_message.action.type + " ]</span>";
 	  			else lastMessage = "<span style='color: #4285f4; font-size: 14px'> [ " + message[i].last_message.attachments[0].type + " ]</span>" + " " + message[i].last_message.text;
 
-				drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
+				drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time, chatId);
 			}
 			else if (message[i].conversation.peer.type == "group"){
 				var chatName, chatImage;
@@ -97,11 +97,12 @@ function messagesMenu(){
 				var unreadMessages = (message[i].conversation.unread_count == undefined) ? "" : message[i].conversation.unread_count;
 				var style = (message[i].conversation.unread_count == undefined) ? "style='display: none'" : "style='display: block'";
 				var time = timeConverter(message[i].last_message.date);
+				var chatId = message[i].conversation.peer.id;
 				if (message[i].last_message.fwd_messages.length != 0) lastMessage = message[i].last_message.fwd_messages.length + " messages";
 	  			else if (message[i].last_message.attachments[0] == undefined) messageType = "notFound";
 	  			else lastMessage = "<span style='color: #4285f4; font-size: 14px'> [ "+ message[i].last_message.attachments[0].type + " ]</span>" + " " + message[i].last_message.text;
 
-				drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time);
+				drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time, chatId);
 			}
 			else new Error ("there is no support for this type of message yet");
 			function timeConverter(UNIX_timestamp){
@@ -129,8 +130,8 @@ function messagesMenu(){
 	  			return time;
 			}
 			// функция ресует html для сайдбара 	
-			function drawInHtml(name, img, lastMessage, unreadMessages, style, time){
-				html += "<div class='side_bar_messages_container'>"
+			function drawInHtml(name, img, lastMessage, unreadMessages, style, time, peer_id){
+				html += "<div class='side_bar_messages_container' data-id='" + peer_id + "'>"
 				  		+ "<div>"
 							+ "<img src='" + img + "'alt='img_conversation' />"
 						+ "</div>"
@@ -235,7 +236,7 @@ function friendsMenu (){
 }
 
 // Показывает инфу о текущем юзере (сверху в сайдбаре)
-sendRequest ("users.get", {fields: 'photo_100,status'}, (data) => Draw_user_information(data.response[0]));
+sendRequest("users.get", {fields: 'photo_100,status'}, (data) => Draw_user_information(data.response[0]));
 function Draw_user_information (user){
 	$("#photo_user").attr("src", user.photo_100);
 
