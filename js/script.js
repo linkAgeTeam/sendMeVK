@@ -14,6 +14,10 @@ function documentLoad(){
 	}
 }
 
+document.querySelector("#menu_list").onclick   = () => document.querySelector('.list_search').style.display = 'flex';
+document.querySelector(".list_search").onclick = () => document.querySelector(".list_search").style.display = 'none';
+document.querySelector("#remove_list").onclick = () => document.querySelector(".list_search").style.display = 'none';
+
 // Обрабатывает работу меню в сайдбаре
 function menu (pointer){
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.borderBottom = "2px solid #72a7ff";

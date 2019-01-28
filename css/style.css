@@ -110,15 +110,10 @@ aside {
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+	position: relative;
 }
 .top_bottom_bar > div {
-	display: flex;
-	flex-direction: row;
 	margin-left: 30px;
-}
-.top_bottom_bar > img {
-	margin-right: 30px;
-	cursor: pointer;
 }
 .top_bottom_bar > div > input {
 	background-color: #3367d6;
@@ -419,7 +414,11 @@ img[alt='files'] {
 	margin-right: 	9px;
 }
 img[alt='more'] {
-	margin-left: 13px;
+	cursor: pointer;
+	padding-right: 20px;
+	padding-left: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 .chat_messege {
 	position: fixed;
@@ -616,6 +615,53 @@ img[alt='icon_user'] {
 .notThis_user_message > div > .message_text {
 	background-color: white;
 }
+
+/* Side bar search list */
+
+.list_search {
+	width: 190px;
+	background-color: #009eff;
+	border-radius: 10px;
+	flex-direction: column;
+	z-index: 1;
+	position: absolute;
+	justify-content: center;
+	top: 60px;
+	left: 225px;
+	display: none;
+}
+.list_search > p:first-child {
+	margin-top: 15px;
+}
+.list_search > p:last-child {
+	margin-bottom: 15px !important;
+}
+.list_search > p {
+	margin-left: 10px;
+	cursor: pointer;
+	font-family: ProximaNova Regular;
+	font-size: 16px;
+	color: white;
+	margin-bottom: 15px;
+}
+#plist {
+	position: absolute;
+	width: 24px;
+	height: 12px !important;
+	bottom: 115px;
+	left: 80px;
+}
+#remove_list {
+	position: absolute;
+	left: 165px;
+	bottom: 93px;
+	width: 12px;
+	height: 12px;
+}
+.list_search > p:hover {
+	color: #344b7c;
+}
+
 
 
 
