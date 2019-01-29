@@ -14,12 +14,16 @@ function documentLoad(){
 	}
 }
 
+document.querySelector("#menu_list").onclick   = () => document.querySelector('.list_search').style.display = 'flex';
+document.querySelector(".list_search").onclick = () => document.querySelector(".list_search").style.display = 'none';
+document.querySelector("#remove_list").onclick = () => document.querySelector(".list_search").style.display = 'none';
+
 // Обрабатывает работу меню в сайдбаре
 function menu (pointer){
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.borderBottom = "2px solid #72a7ff";
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.color = "#3367d6";
 
-	if (point == undefined) { point = pointer; sendRequest("messages.getConversations", { count: 20, extended: 1}, (data) => messagesMenu(data.response)); return 0; }
+	if (point == undefined) { point = pointer; sendRequest("messages.getConversations", { count: 10, extended: 1}, (data) => messagesMenu(data.response)); return 0; }
 
 	document.querySelectorAll(".bottom_bar_menu > div")[point].style.borderBottom = "1px solid #f4f4f4";
 	document.querySelectorAll(".bottom_bar_menu > div")[point].style.color = "#4b4b4b";
@@ -41,7 +45,7 @@ function menu (pointer){
 //функция для вызова список бесед в сйдбаре при клике
 function messagesMenu(){	
 	
-	sendRequest("messages.getConversations", { count: 20, extended: 1}, (data) => drawMessages(data.response));
+	sendRequest("messages.getConversations", { count: 10, extended: 1}, (data) => drawMessages(data.response));
 
 	function drawMessages(m){
 		var html = " ";
@@ -254,27 +258,21 @@ function setStatus () {
 // При клике на крест сворачивает сайдбар на мини сайдбар
 $("img[alt='remove']").on("click", function(){
 	$("aside").css("animation-name", "sidebarHide");
-
 	$(".top_bottom_bar > div > input").css("display", "none");
-
 	$(".miniside").css("display", "flex");
-
 	setTimeout(() => $("aside").css("display", "none"), 1000);
-	
 	sendRequest('friends.search', {count: 50, fields: 'photo_100'}, (data) => drawFriends(data.response));
 	function drawFriends (friends){
 		var html = " ";
-
-		$("main").css({ "width": "calc(100vw - 80px)", "position": "relative", "left": "80px" });
-		$(".chat_information").css("width", "calc(100vw - 80px");
-		$(".chat_menu").css("width", "calc(100vw - 80px");
-		$(".chat_messege").css("width", "calc(100vw - 80px");
-
+		$("main").css({ "width": "calc(-97px + 100vw)", "position": "relative", "left": "80px" });
+		$(".chat_information").css({"width": "calc(100vw - 80px", "left": "80px"});
+		$(".chat_menu").css({"width": "calc(100vw - 80px", "left": "80px" });
+		$(".chat_messege").css("width", "calc(100vw - 100px");
+		$(".list_search").css("display", "none");
 		for (var i = 0; i < friends.items.length; i++)
 			html += "<li title='" + friends.items[i].first_name + ' ' + friends.items[i].last_name + "'>" 
 				+ "<img src=" + friends.items[i].photo_100 + "/>" 
 			+ "</li>";
-
 		$(html).appendTo("#sidebar");
 	}
 });
@@ -283,9 +281,9 @@ $("img[alt='menu']").on("click", function(){
 	$(".miniside").css("display", "none");
 	$("aside").css("display", "flex");
 	$("aside").css("animation-name", "sidebarBack");
-	$(".chat_information").css("width", "calc(100vw - 370px");
-	$(".chat_menu").css("width", "calc(100vw - 370px");
-	$(".chat_messege").css("width", "calc(100vw - 370px");
+	$(".chat_information").css({"width": "calc(100vw - 390px","left": "auto" });
+	$(".chat_menu").css({"width": "calc(100vw - 384px", "left": "auto" });
+	$(".chat_messege").css("width", "calc(100vw - 383px");
 	setTimeout(() => $(".top_bottom_bar > div > input").css("display", "block"), 1000);
-	$("main").css({ "width": "calc(100vw - 370px)", "position": "relative", "left": "0px" });
+	$("main").css({ "width": "calc(100vw - 390px)", "position": "relative", "left": "373px" });
 });
