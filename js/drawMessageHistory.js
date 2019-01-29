@@ -7,6 +7,9 @@ function drawMessageHistory (chatId){
 	chatName = document.getElementById("chatName");
 	chatName.innerHTML = chatId[0].ownerElement.children[1].children[0].innerHTML;
 
+	var mh = document.getElementsByClassName("message_history");
+
+
 	sendRequest("users.get", {fields: 'photo_50'}, (data) => getThisUser(data.response[0]));
 	function getThisUser(thisUser) { thisUserId = thisUser.id; thisUserImg = thisUser.photo_50; thisUserName = thisUser.first_name + " " + thisUser.last_name; }
 
@@ -50,6 +53,10 @@ function drawMessageHistory (chatId){
 					+ "</div>"
 				+ "</div>"
 		}
+
+		alert(" the hight = "+ mh[0].scrollHeight+"top = "+mh[0].scrollTop );
+		mh[0].scrollTop = mh[0].scrollHeight ;
+		console.log("top = " + mh[0].scrollTop);
 		function timeConverter(UNIX_timestamp) {
   			var a = new Date(UNIX_timestamp * 1000);
   			var b = new Date();

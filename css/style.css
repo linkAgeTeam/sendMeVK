@@ -562,6 +562,8 @@ img[alt='Attach file'] {
 	margin-top: 25px;
 	max-width: 670px;
 	cursor: pointer;
+	position: relative;
+	bottom: 0px;
 }
 .this_user_message > div {
 	display: flex;
