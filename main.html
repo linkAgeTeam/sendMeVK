@@ -4,9 +4,9 @@
         <meta charset="utf-8" http-equiv="X-UA-Compatible" name="index">
         <title>Send me VK</title>
         <link rel="stylesheet" href="css/style.css">
-        <script src="js/Jquery.js" type="text/javascript" charset="utf-8" defer></script>
-        <script src="js/sendRequest.js" type="text/javascript" charset="utf-8" async></script>
-        <script src="js/script.js" type="text/javascript" charset="utf-8" async></script>
+        <script src="js/Jquery.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/sendRequest.js" type="text/javascript" charset="utf-8" defer></script>
+        <script src="js/script.js" type="text/javascript" charset="utf-8" defer></script>
         <script src="js/drawMessageHistory.js" type="text/javascript" charset="utf-8" defer></script>
         <link href="img/logo.png" rel="shortcut icon">
 </head>
@@ -38,13 +38,6 @@
 					<input type="text" placeholder="Search here">
 				</div>
 				<img src="img/more_info.png" id="menu_list" alt="more">
-				<div class="list_search">
-					<p>Stealth mode</p>
-					<img src="img/remove.png" id="remove_list">
-					<img src="img/list_point.png" id="plist">
-					<p>Turn off notifications</p>
-					<p>Exit</p>
-				</div>
 			</div>
 		</div>
 		<div class="middle_bar"></div>
@@ -65,6 +58,16 @@
 		</ul>
 	</div>
 	<main id="main">
+		<div class="list_search">
+			<p>Stealth mode</p>
+			<img src="img/remove.png" id="remove_list">
+			<img src="img/list_point.png" id="plist">
+			<p>Turn off notifications</p>
+			<p>Exit</p>
+		</div>
+		<div class="no_history">
+			<p>Choose who would like to write</p>
+		</div>
 		<div class="chat_information">
 			<div>
 				<p id="chatName"></p>
@@ -82,24 +85,7 @@
 				<p>More<img src="img/More.png" alt="more"></p>
 			</div>
 		</div>
-		<div class="message_history">
-			<div class="this_user_message">
-				<div>
-					<p class="message_time">8:00</p>
-					<p class="message_text">Hello friend</p>
-				</div>
-				<img src="img/user_message_icon.png" alt="icon_user">
-			</div>
-			<div class="notThis_user_message">
-				<div>
-					<img src="img/user_message_icon.png" alt="icon_user">
-				</div>
-				<div>
-					<p class="message_time">8:05</p>
-					<p class="message_text">Go fuck yourself</p>
-				</div>
-			</div>
-		</div>
+		<div class="message_history"></div>
 		<div class="chat_messege">
 			<div class="typing">
 				<p>Username is typing . . .</p>

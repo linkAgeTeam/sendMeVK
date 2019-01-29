@@ -2,20 +2,28 @@ window.onload = () => $(".side_bar_messages_container").on("click", function (pE
 
 
 function drawMessageHistory (chatId){
+	$(".no_history").css("display", "none");
+
 	var thisUserId, thisUserImg, thisUserName, chatName;
 
 	chatName = document.getElementById("chatName");
 	chatName.innerHTML = chatId[0].ownerElement.children[1].children[0].innerHTML;
 
 	sendRequest("users.get", {fields: 'photo_50'}, (data) => getThisUser(data.response[0]));
-	function getThisUser(thisUser) { thisUserId = thisUser.id; thisUserImg = thisUser.photo_50; thisUserName = thisUser.first_name + " " + thisUser.last_name; }
 
-	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 100, extended: 1}, (data) => renderMessageHistory(data.response));
+	function getThisUser(thisUser) {
+		thisUserId = thisUser.id;
+		thisUserImg = thisUser.photo_50;
+		thisUserName = thisUser.first_name + " " + thisUser.last_name;
+	}
+
+	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 10, extended: 1}, (data) => renderMessageHistory(data.response));
 
 	function renderMessageHistory (m){
 		var item = m.items.reverse();
 		var userImg, userName, timeMessage, textMessage;
 		var html = "";
+		var mediaContent = "";
 
 		for (var i=0; i < item.length; i++) {
 			if (thisUserId != item[i].from_id) {
@@ -32,12 +40,28 @@ function drawMessageHistory (chatId){
 			}
 			timeMessage = timeConverter(item[i].date);
 			textMessage = item[i].body;
-			
+			//console.log(item[i])
+			if ("attachments" in item[i]) { // Значит в сообщение есть медиаконтент
+				switch (item[i].attachments[0].type) { 
+					case "photo": mediaContent = "<img class='message_photo' src='" + item[i].attachments[0].photo.photo_604 + "'><br>"; break;
+					case "video": console.log("This message type (video) is not yet supported"); console.log(item[i].attachments[0]); break;
+					case "audio": mediaContent = "<audio controls class='message_audio' title='" + item[i].attachments[0].audio.artist + " " + item[i].attachments[0].audio.title + "'src='" + item[i].attachments[0].audio.url + "'></audio><br>"; break;
+					case "doc": console.log("This message type (doc) is not yet supported"); console.log(item[i].attachments[0]); break;
+					case "link": console.log("This message type (link) is not yet supported"); console.log(item[i].attachments[0]); break;
+					case "market": console.log("This message type (market) is not yet supported"); console.log(item[i].attachments[0]); break;
+					case "market_album": console.log("This message type (market_album) is not yet supported"); console.log(item[i].attachments[0]); break;
+					case "wall": console.log("This message type (wall) is not yet supported"); console.log(item[i].attachments[0]); break;
+					case "wall_reply": console.log("This message type (wall_reply) is not yet supported"); console.log(item[i].attachments[0]); break;
+					case "sticker": mediaContent = "<img class='message_sticker' src='" + item[i].attachments[0].sticker.photo_128 + "'><br>"; break;
+					case "gift": console.log("This message type (gift) is not yet supported"); console.log(item[i].attachments[0]); break;
+				}
+			}
+			else mediaContent = "";
 			if (thisUserId ==  item[i].from_id)
 				html += "<div class='" + "this_user_message" + "' title='" + userName + "'>"
 					+ "<div>"
 						+ "<p class='message_time'>" + timeMessage + "</p>"
-						+ "<p class='message_text'>" + textMessage + "</p>"
+						+ "<p class='message_text'>" + mediaContent + textMessage + "</p>"
 						+ "</div>"
 					+ "<img src='" + userImg + "'alt='icon_user'>"
 				+ "</div>"
@@ -46,7 +70,7 @@ function drawMessageHistory (chatId){
 					+ "<img src='" + userImg + "'alt='icon_user'>"
 					+ "<div>"
 						+ "<p class='message_time'>" + timeMessage + "</p>"
-						+ "<p class='message_text'>" + textMessage + "</p>"
+						+ "<p class='message_text'>" + mediaContent + textMessage + "</p>"
 					+ "</div>"
 				+ "</div>"
 		}
