@@ -4,9 +4,9 @@ window.onload = () => $(".side_bar_messages_container").on("click", function (pE
 function drawMessageHistory (chatId){
 	$(".no_history").css("display", "none");
 
-	var thisUserId, thisUserImg, thisUserName, chatName, sendButton;
+	$("#mainInputForMessage").val("");
 
-	sendButton = document.getElementById("sendButton") ;
+	var thisUserId, thisUserImg, thisUserName, chatName;
 	
 	//для подписи имя беседы с верху
 	chatName   = document.getElementById("chatName");
@@ -20,7 +20,7 @@ function drawMessageHistory (chatId){
 		thisUserName = thisUser.first_name + " " + thisUser.last_name;
 	}
 
-	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 10, extended: 1}, (data) => renderMessageHistory(data.response));
+	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 100, extended: 1}, (data) => renderMessageHistory(data.response));
 
 	function renderMessageHistory (m){
 		var item = m.items.reverse();
@@ -77,28 +77,11 @@ function drawMessageHistory (chatId){
 					+ "</div>"
 				+ "</div>"
 		}
-
 		// метод при нажатие на кнопку send для отправки собшений
-		sendButton.onclick = function () {
-			var message = document.getElementById("mainInputForMessage").value;
-			console.log(message);
-			if (message != "" ||message != " " ) {
-				var peerId = parseInt(chatId[0].value) ;
-				sendRequest("messages.send", {peer_id: peerId, message: message}, (data) => messageSended(data));
-			}else{
-				return;
-			}
+		document.querySelector(".chat_messege_bottom_content_2").onsubmit = function () { 
+			sendRequest("messages.send", {peer_id: parseInt(chatId[0].value), message: document.getElementById("mainInputForMessage").value}, (data) => drawMessageHistory (chatId));
+			return false;
 		}
-
-		//метод что происходит после отправки собшения 
-		function messageSended(res){
-			//очишяем поля собшений 
-			document.getElementById("mainInputForMessage").value = "";
-			
-			//вызываем метод нарисовки чата с новым собшениям
-			drawMessageHistory (chatId);
-		}
-
 		// метод для получения времини из времини типа уникс 
 		function timeConverter(UNIX_timestamp) {
   			var a = new Date(UNIX_timestamp * 1000);
