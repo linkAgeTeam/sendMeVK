@@ -669,11 +669,12 @@ img[alt='icon_user'] {
 	display: flex;
 	position: absolute;
 	height: 100vh;
-	width: calc(100vw - 385px);
+	width: calc(100vw - 370px);
 	background: linear-gradient(to bottom right, #3d9ad1, aqua);
 	justify-content: center;
 	align-items: center;
 	z-index: 3;
+	left: -3px;
 }
 .no_history > p {
 	color: white;
@@ -696,6 +697,56 @@ img[alt='icon_user'] {
 .message_audio {
 	width: 500px;
 	border-radius: 30px;
+}
+/* Side bar search */
+.search_false {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 80px;
+	width: 100%;
+	cursor: pointer;
+	border-bottom: 2px whitesmoke solid;
+	border-top: 2px whitesmoke solid;
+}
+.search_false > p:first-child {
+	color: red;
+	font-family: ProximaNova Regular;
+	font-size: 16px;
+	font-weight: bold;
+}
+.search_false > p:last-child {
+	color: black;
+	font-size: 16px;
+	font-family: ProximaNova Regular;
+}
+.search_false:hover {
+	background-color: whitesmoke;
+}
+.messageSearchContainer {
+	display: flex;
+	height: 60px;
+	width: 100%;
+	align-items: center;
+	justify-content: flex-start;
+	border-bottom: 2px whitesmoke solid;
+	cursor: pointer;
+}
+.messageSearchContainer > img {
+	width: 50px;
+	border-radius: 35px;
+	margin-right: 30px;
+	margin-left: 20px;
+}
+.messageSearchContainer:hover {
+	background-color: lightblue;
+	transition: .6s;
+}
+.messageSearchContainer > p {
+	color: #4b4b4b;
+	font-family: ProximaNova Regular;
+	font-size: 15px;
 }
 
 
@@ -733,10 +784,10 @@ img[alt='icon_user'] {
 
 /*///// Fonts inncluding /////*/
 @font-face {
-	src: url(fonts/ProximaNova/ProximaNova Regular.ttf);
+	src: url("fonts/ProximaNova/ProximaNova Regular.ttf");
 	font-family: ProximaNova Regular;
 }
 @font-face {
-	src: url(fonts/ProximaNova/ProximaNova Light.ttf);
+	src: url("fonts/ProximaNova/ProximaNova Light.ttf");
 	font-family: ProximaNova Light;
 }

@@ -23,7 +23,7 @@ function menu (pointer){
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.borderBottom = "2px solid #72a7ff";
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.color = "#3367d6";
 
-	if (point == undefined) { point = pointer; sendRequest("messages.getConversations", { count: 10, extended: 1}, (data) => messagesMenu(data.response)); return 0; }
+	if (point == undefined) { point = pointer; messagesMenu(); return 0; }
 
 	document.querySelectorAll(".bottom_bar_menu > div")[point].style.borderBottom = "1px solid #f4f4f4";
 	document.querySelectorAll(".bottom_bar_menu > div")[point].style.color = "#4b4b4b";
@@ -42,7 +42,53 @@ function menu (pointer){
 	}
 }
 
-//функция для вызова список бесед в сйдбаре при клике
+// Обрабатывает поиск в сайдбаре
+$("#sidebar_search").keyup(function() {
+	sendRequest("messages.searchConversations", {q: document.getElementById("sidebar_search").value, count: 15, extended: 1}, (data) => messageSearch(data.response));
+});
+function messageSearch (data) { // Функция обработки поиска
+	if (data.count == 0) {
+			$(".bottom_bar_content").html("<div class='search_false'><p>Dialogue not found!</p><p>Search in messages</p></div>");
+		}
+	else
+		SearchConversationByName(data);
+
+		function SearchConversationByName(m) { // Поиск переписок по названию диалога
+			var html = "";
+			var array = new Array();
+
+			if ("items" in m) {
+				for (var i=0; i < m.items.length; i++) {
+					if (m.items[i].peer.type == "chat") {
+						var photo = ("photo" in m.items[i].chat_settings) ? m.items[i].chat_settings.photo.photo_100  : "img/noImageForChat.png";
+						html += "<div class='messageSearchContainer'>" 
+						+ "<img src='" + photo + "'>"
+						+ "<p>" + m.items[i].chat_settings.title + "</p>"	
+						+ "</div>";
+					} 
+				}
+			}
+			if ("profiles" in m) {
+				for (var i=0; i < m.profiles.length; i++) {
+					html += "<div class='messageSearchContainer'>" 
+					+ "<img src='" + m.profiles[i].photo_100 + "'>"
+					+ "<p>" + m.profiles[i].first_name + " " + m.profiles[i].last_name + "</p>"	
+					+ "</div>"; 
+				}
+			}
+			if ("groups" in m) {
+				for (var i=0; i < m.groups; i++) {
+					html += "<div class='messageSearchContainer'>" 
+					+ "<img src='" + m.groups[i].photo_100 + "'>"
+					+ "<p>" + m.groups.name + "</p>"	
+					+ "</div>";
+				}
+			}
+			html += "<div class='messageSearchContainer'>"
+			+
+			$(".bottom_bar_content").html(html);
+		}
+}
 function messagesMenu(){	
 	
 	sendRequest("messages.getConversations", { count: 10, extended: 1}, (data) => drawMessages(data.response));
@@ -152,11 +198,9 @@ function messagesMenu(){
 			}
 		}
 	}
-}	
-
+} 	
 //функция для вызова список длрузей в сйдбаре при клике 
 function friendsMenu (){	
-	
 	sendRequest('friends.search', { count: 20, fields: 'photo_100,status,online,last_seen' }, (data) => drawFriends(data.response));
 	
 	function drawFriends (f){
@@ -260,6 +304,7 @@ $("img[alt='remove']").on("click", function(){
 	$("aside").css("animation-name", "sidebarHide");
 	$(".top_bottom_bar > div > input").css("display", "none");
 	$(".miniside").css("display", "flex");
+	$(".no_history").css("width", "calc(100vw - 70px)");
 	setTimeout(() => $("aside").css("display", "none"), 1000);
 	sendRequest('friends.search', {count: 50, fields: 'photo_100'}, (data) => drawFriends(data.response));
 	function drawFriends (friends){
@@ -281,9 +326,10 @@ $("img[alt='menu']").on("click", function(){
 	$(".miniside").css("display", "none");
 	$("aside").css("display", "flex");
 	$("aside").css("animation-name", "sidebarBack");
-	$(".chat_information").css({"width": "calc(100vw - 390px","left": "auto" });
+	$(".chat_information").css({"width": "calc(100vw - 370px","left": "auto" });
 	$(".chat_menu").css({"width": "calc(100vw - 384px", "left": "auto" });
 	$(".chat_messege").css("width", "calc(100vw - 383px");
+	$(".no_history").css("width", "calc(100vw - 385px)");
 	setTimeout(() => $(".top_bottom_bar > div > input").css("display", "block"), 1000);
 	$("main").css({ "width": "calc(100vw - 390px)", "position": "relative", "left": "373px" });
 });
