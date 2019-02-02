@@ -65,10 +65,7 @@ function messageSearch (data) {
 					var chatImage = ("photo" in m.items[i].chat_settings) ? m.items[i].chat_settings.photo.photo_100  : "img/noImageForChat.png";
 					var chatName  =	m.items[i].chat_settings.title; 
 					var p_id = m.items[i].peer.id;
-					var stat ="";
-					var onlineOrOffline = m.items[i].chat_settings.active_ids.length+" members online";
-
-					drawInHtml(chatName, chatImage, p_id, stat, onlineOrOffline);
+					drawInHtml(chatName, chatImage, p_id);
 				} 
 			}
 		}
@@ -77,19 +74,8 @@ function messageSearch (data) {
 				var userName  =	m.profiles[i].first_name + " " + m.profiles[i].last_name ;
 				var userImage = m.profiles[i].photo_100 ;
 				var p_id   = m.profiles[i].id; 
-				var online  = m.profiles[i].online ;
 				
-				if (online == 1){
-					stat = "<img src='img/status_desctop.png' alt='status' id='onlineStatusInSearch'>";
-					onlineOrOffline = "online";
-
-					//в этом месте находится дата последниего время онлайн оно скрыто если юзер онлайн
-					$(".side_bar_messages_container > div:last-child > p:last-child").css("display","none");
-				}else {
-					stat = "";
-					onlineOrOffline = "offline";
-				}
-				drawInHtml(userName, userImage, p_id, stat, onlineOrOffline);	  
+				drawInHtml(userName, userImage, p_id);	  
 			}
 		}
 		if ("groups" in m) {
@@ -97,25 +83,22 @@ function messageSearch (data) {
 				var groupImage = m.groups[i].photo_100;
 				var groupName  = m.groups.name;
 				var p_id = m.groups.id ;
-				var stat  = "";
-				var onlineOrOffline = "" ;
-				drawInHtml(groupName, groupImage, p_id, stat, onlineOrOffline);
+				drawInHtml(groupName, groupImage, p_id);
 			}
 		}
 		
-		function drawInHtml(name, img, peer_id, stat, textBeforeLastSeen){
+		function drawInHtml(name, img, peer_id){
 				html += "<div class='side_bar_messages_container' data-id='" + peer_id + "'>"
 				  		+ "<div>"
 							+ "<img src='" + img + "'alt='img_conversation' />"
-							+stat
 						+ "</div>"
 						+ "<div class='side_bar_messages_container_block2'>"
-							+ "<p>" + name + "</p>"
+							+ "<p style='font-size:14px; margin-left:-20px; margin-bottom:-20px;'>" + name + "</p>"
 							+ "<p> </p>"
 						+ "</div>"
 						+ "<div>"
 							+ "<p style='display:none '> </p>"
-							+ "<p>" +textBeforeLastSeen+ "</P>"
+							+ "<p></P>"
 						+ "</div>"
 					+ "</div>";
 				$(".bottom_bar_content").html(html);
