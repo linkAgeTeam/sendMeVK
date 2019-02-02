@@ -63,7 +63,7 @@ function messageSearch (data) {
 			for (var i=0; i < m.items.length; i++) {
 				if (m.items[i].peer.type == "chat") {
 					var chatImage = ("photo" in m.items[i].chat_settings) ? m.items[i].chat_settings.photo.photo_100  : "img/noImageForChat.png";
-					var chatName  =	m.items[i].chat_settings.title; 
+					var chatName  =	(m.items[i].chat_settings.title.length > 25)? m.items[i].chat_settings.title.slice(0,25)+"..." : m.items[i].chat_settings.title; 
 					var p_id = m.items[i].peer.id;
 					drawInHtml(chatName, chatImage, p_id);
 				} 
@@ -74,14 +74,13 @@ function messageSearch (data) {
 				var userName  =	m.profiles[i].first_name + " " + m.profiles[i].last_name ;
 				var userImage = m.profiles[i].photo_100 ;
 				var p_id   = m.profiles[i].id; 
-				
 				drawInHtml(userName, userImage, p_id);	  
 			}
 		}
 		if ("groups" in m) {
 			for (var i=0; i < m.groups; i++) {
 				var groupImage = m.groups[i].photo_100;
-				var groupName  = m.groups.name;
+				var groupName  = (m.groups.name.length > 25)? m.groups[i].name.slice(0,25)+"..." :  m.groups[i].name;
 				var p_id = m.groups.id ;
 				drawInHtml(groupName, groupImage, p_id);
 			}
