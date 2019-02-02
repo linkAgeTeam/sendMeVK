@@ -3,6 +3,7 @@
 var state = setInterval(documentLoad, 100);
 var point;
 
+
 // Что бы при загрузке по умолчанию была открыта вкладка "Message"
 menu (0);  
 
@@ -46,51 +47,87 @@ function menu (pointer){
 $("#sidebar_search").keyup(function() {
 	sendRequest("messages.searchConversations", {q: document.getElementById("sidebar_search").value, count: 15, extended: 1}, (data) => messageSearch(data.response));
 });
-function messageSearch (data) { // Функция обработки поиска
-	if (data.count == 0) {
+
+// Функция обработки поиска
+function messageSearch (data) { 
+	if (data.count == 0){
 			$(".bottom_bar_content").html("<div class='search_false'><p>Dialogue not found!</p><p>Search in messages</p></div>");
-		}
-	else
+	}else{
 		SearchConversationByName(data);
-
-		function SearchConversationByName(m) { // Поиск переписок по названию диалога
-			var html = "";
-			var array = new Array();
-
-			if ("items" in m) {
-				for (var i=0; i < m.items.length; i++) {
-					if (m.items[i].peer.type == "chat") {
-						var photo = ("photo" in m.items[i].chat_settings) ? m.items[i].chat_settings.photo.photo_100  : "img/noImageForChat.png";
-						html += "<div class='messageSearchContainer'>" 
-						+ "<img src='" + photo + "'>"
-						+ "<p>" + m.items[i].chat_settings.title + "</p>"	
-						+ "</div>";
-					} 
-				}
-			}
-			if ("profiles" in m) {
-				for (var i=0; i < m.profiles.length; i++) {
-					html += "<div class='messageSearchContainer'>" 
-					+ "<img src='" + m.profiles[i].photo_100 + "'>"
-					+ "<p>" + m.profiles[i].first_name + " " + m.profiles[i].last_name + "</p>"	
-					+ "</div>"; 
-				}
-			}
-			if ("groups" in m) {
-				for (var i=0; i < m.groups; i++) {
-					html += "<div class='messageSearchContainer'>" 
-					+ "<img src='" + m.groups[i].photo_100 + "'>"
-					+ "<p>" + m.groups.name + "</p>"	
-					+ "</div>";
-				}
-			}
-			html += "<div class='messageSearchContainer'>"
-			+
-			$(".bottom_bar_content").html(html);
-		}
-}
-function messagesMenu(){	
+	}		
 	
+	// Поиск переписок по названию диалога
+	function SearchConversationByName(m){ 
+		var html = "";
+		if ("items" in m) {
+			for (var i=0; i < m.items.length; i++) {
+				if (m.items[i].peer.type == "chat") {
+					var chatImage = ("photo" in m.items[i].chat_settings) ? m.items[i].chat_settings.photo.photo_100  : "img/noImageForChat.png";
+					var chatName  =	m.items[i].chat_settings.title; 
+					var p_id = m.items[i].peer.id;
+					var stat ="";
+					var onlineOrOffline = m.items[i].chat_settings.active_ids.length+" members online";
+
+					drawInHtml(chatName, chatImage, p_id, stat, onlineOrOffline);
+				} 
+			}
+		}
+		if ("profiles" in m) {
+			for (var i=0; i < m.profiles.length; i++) {
+				var userName  =	m.profiles[i].first_name + " " + m.profiles[i].last_name ;
+				var userImage = m.profiles[i].photo_100 ;
+				var p_id   = m.profiles[i].id; 
+				var online  = m.profiles[i].online ;
+				
+				if (online == 1){
+					stat = "<img src='img/status_desctop.png' alt='status' id='onlineStatusInSearch'>";
+					onlineOrOffline = "online";
+
+					//в этом месте находится дата последниего время онлайн оно скрыто если юзер онлайн
+					$(".side_bar_messages_container > div:last-child > p:last-child").css("display","none");
+				}else {
+					stat = "";
+					onlineOrOffline = "offline";
+				}
+				drawInHtml(userName, userImage, p_id, stat, onlineOrOffline);	  
+			}
+		}
+		if ("groups" in m) {
+			for (var i=0; i < m.groups; i++) {
+				var groupImage = m.groups[i].photo_100;
+				var groupName  = m.groups.name;
+				var p_id = m.groups.id ;
+				var stat  = "";
+				var onlineOrOffline = "" ;
+				drawInHtml(groupName, groupImage, p_id, stat, onlineOrOffline);
+			}
+		}
+		
+		function drawInHtml(name, img, peer_id, stat, textBeforeLastSeen){
+				html += "<div class='side_bar_messages_container' data-id='" + peer_id + "'>"
+				  		+ "<div>"
+							+ "<img src='" + img + "'alt='img_conversation' />"
+							+stat
+						+ "</div>"
+						+ "<div class='side_bar_messages_container_block2'>"
+							+ "<p>" + name + "</p>"
+							+ "<p> </p>"
+						+ "</div>"
+						+ "<div>"
+							+ "<p style='display:none '> </p>"
+							+ "<p>" +textBeforeLastSeen+ "</P>"
+						+ "</div>"
+					+ "</div>";
+				$(".bottom_bar_content").html(html);
+		}
+		$(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
+	}	
+}
+
+
+// метод для вызова список собшений в сайд баре при клике
+function messagesMenu(){	
+	$("#sidebar_search").val("");//освобождает поля поиска так как уже кликнули на беседу
 	sendRequest("messages.getConversations", { count: 10, extended: 1}, (data) => drawMessages(data.response));
 
 	function drawMessages(m){
@@ -195,12 +232,15 @@ function messagesMenu(){
 						+ "</div>"
 					+ "</div>";
 				$(".bottom_bar_content").html(html);
+				$(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
 			}
 		}
 	}
 } 	
-//функция для вызова список длрузей в сйдбаре при клике 
+
+// метод для вызова список длрузей в сйдбаре при клике 
 function friendsMenu (){	
+	$("#sidebar_search").val("");//освобождает поля поиска так как уже кликнули на беседу
 	sendRequest('friends.search', { count: 20, fields: 'photo_100,status,online,last_seen' }, (data) => drawFriends(data.response));
 	
 	function drawFriends (f){

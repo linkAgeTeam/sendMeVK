@@ -1,7 +1,6 @@
-window.onload = () => $(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
+$(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
 
-
-function drawMessageHistory (chatId){
+function drawMessageHistory(chatId){
 	$(".no_history").css("display", "none");
 
 	$("#mainInputForMessage").val("");
@@ -20,7 +19,7 @@ function drawMessageHistory (chatId){
 		thisUserName = thisUser.first_name + " " + thisUser.last_name;
 	}
 
-	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 100, extended: 1}, (data) => renderMessageHistory(data.response));
+	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 20, extended: 1}, (data) => renderMessageHistory(data.response));
 
 	function renderMessageHistory (m){
 		var item = m.items.reverse();
