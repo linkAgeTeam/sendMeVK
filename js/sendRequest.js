@@ -22,8 +22,8 @@
 
 // Функция принимает метод и его параметры и возврощяет url строку для http запроса
 function getUrl (method, params){
-	var rToken = "ccdcff221d43ffc19be3b8006cd36663117013aa97a5c7f4e4811cd717c5b2a93630505eedf729fbfeb5b";
-	var aToken = "4a4b6ba0e03968cb7d262df9c6ff17f4290ebac788a25755ac2eff40232a44a79ba6cc83f3d04a6e2c68f";
+	const rToken = "ccdcff221d43ffc19be3b8006cd36663117013aa97a5c7f4e4811cd717c5b2a93630505eedf729fbfeb5b";
+	const aToken = "4a4b6ba0e03968cb7d262df9c6ff17f4290ebac788a25755ac2eff40232a44a79ba6cc83f3d04a6e2c68f";
 	if (!method) throw new Error('You did not specify a method!'); // Если метод не был указан при вызове функций то будет создана ошибка
 
 	params = params || {}; // Проверка если параметры не переданы то преобразуем их в пустой обьект

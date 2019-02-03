@@ -44,7 +44,10 @@ function menu (pointer){
 
 // Обрабатывает поиск в сайдбаре
 $("#sidebar_search").keyup(function() {
-	sendRequest("messages.searchConversations", {q: document.getElementById("sidebar_search").value, count: 15, extended: 1}, (data) => messageSearch(data.response));
+	if (document.getElementById("sidebar_search").value == "")
+		messagesMenu();
+	else
+		sendRequest("messages.searchConversations", {q: document.getElementById("sidebar_search").value, count: 15, extended: 1}, (data) => messageSearch(data.response));
 });
 function messageSearch (data) { // Функция обработки поиска
 	if (data.count == 0) {
@@ -60,33 +63,39 @@ function messageSearch (data) { // Функция обработки поиск�
 			if ("items" in m) {
 				for (var i=0; i < m.items.length; i++) {
 					if (m.items[i].peer.type == "chat") {
-						var photo = ("photo" in m.items[i].chat_settings) ? m.items[i].chat_settings.photo.photo_100  : "img/noImageForChat.png";
-						html += "<div class='messageSearchContainer'>" 
+						const name = m.items[i].chat_settings.title.length >= 25 ? m.items[i].chat_settings.title.slice(0, 25) + "..." : m.items[i].chat_settings.title;
+						const photo = ("photo" in m.items[i].chat_settings) ? m.items[i].chat_settings.photo.photo_100  : "img/noImageForChat.png";
+						html += "<div class='messageSearchContainer' data-id='" + m.items[i].peer.id + "'>" 
 						+ "<img src='" + photo + "'>"
-						+ "<p>" + m.items[i].chat_settings.title + "</p>"	
+						+ "<p>" + name + "</p>"	
 						+ "</div>";
 					} 
 				}
 			}
 			if ("profiles" in m) {
 				for (var i=0; i < m.profiles.length; i++) {
-					html += "<div class='messageSearchContainer'>" 
+					const name =  m.profiles[i].first_name.length > 28 ?  m.profiles[i].first_name.slice(0, 28) + "..." : m.profiles[i].first_name;
+					html += "<div class='messageSearchContainer' data-id='" + m.profiles[i].id + "'>" 
 					+ "<img src='" + m.profiles[i].photo_100 + "'>"
-					+ "<p>" + m.profiles[i].first_name + " " + m.profiles[i].last_name + "</p>"	
+					+ "<p>" + name + " " + m.profiles[i].last_name + "</p>"	
 					+ "</div>"; 
 				}
 			}
 			if ("groups" in m) {
-				for (var i=0; i < m.groups; i++) {
-					html += "<div class='messageSearchContainer'>" 
+				for (var i=0; i < m.groups.length; i++) {
+					const name = m.groups[i].name.length > 28 ? m.groups[i].name.slice(0, 28) + "..." : m.groups[i].name;
+					html += "<div class='messageSearchContainer' data-id='" + m.groups[i].id + "'>" 
 					+ "<img src='" + m.groups[i].photo_100 + "'>"
-					+ "<p>" + m.groups.name + "</p>"	
+					+ "<p>" + name + "</p>"	
 					+ "</div>";
 				}
 			}
 			html += "<div class='messageSearchContainer'>"
-			+
+			+ "<p>Search in messages</p>"
+			+ "</div>";
+
 			$(".bottom_bar_content").html(html);
+			$(".messageSearchContainer").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
 		}
 }
 function messagesMenu(){	
@@ -181,7 +190,7 @@ function messagesMenu(){
 			}
 			// функция ресует html для сайдбара 	
 			function drawInHtml(name, img, lastMessage, unreadMessages, style, time, peer_id){
-				html += "<div class='side_bar_messages_container' data-id='" + peer_id + "'>"
+				html += "<div class='side_bar_messages_container' data-id='" + peer_id + "'data-name='" + name + "'>"
 				  		+ "<div>"
 							+ "<img src='" + img + "'alt='img_conversation' />"
 						+ "</div>"
@@ -195,6 +204,8 @@ function messagesMenu(){
 						+ "</div>"
 					+ "</div>";
 				$(".bottom_bar_content").html(html);
+				$(".side_bar_messages_container").on("click", function (pElement) { console.log($(pElement.currentTarget.attributes)) });
+				//$(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1]), $(pElement.currentTarget.attributes[2])) });
 			}
 		}
 	}

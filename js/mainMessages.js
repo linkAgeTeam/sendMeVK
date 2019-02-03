@@ -1,16 +1,15 @@
-window.onload = () => $(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
+window.onload = () => $(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1]), $(pElement.currentTarget.attributes[2])) });
 
+function drawMessageHistory (chatId, name){
+	if (chatId == undefined) return false;
 
-function drawMessageHistory (chatId){
 	$(".no_history").css("display", "none");
 
 	$("#mainInputForMessage").val("");
 
 	var thisUserId, thisUserImg, thisUserName, chatName;
 	
-	//для подписи имя беседы с верху
-	chatName   = document.getElementById("chatName");
-	chatName.innerHTML = chatId[0].ownerElement.children[1].children[0].innerHTML ;
+	document.getElementById("chatName").textContent = name[0].value;
 
 	sendRequest("users.get", {fields: 'photo_50'}, (data) => getThisUser(data.response[0]));
 
@@ -43,7 +42,7 @@ function drawMessageHistory (chatId){
 			}
 			timeMessage = timeConverter(item[i].date);
 			textMessage = item[i].body;
-			//console.log(item[i])
+			
 			if ("attachments" in item[i]) { // Значит в сообщение есть медиаконтент
 				switch (item[i].attachments[0].type) { 
 					case "photo": mediaContent = "<img class='message_photo' src='" + item[i].attachments[0].photo.photo_604 + "'><br>"; break;

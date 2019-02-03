@@ -748,6 +748,22 @@ img[alt='icon_user'] {
 	font-family: ProximaNova Regular;
 	font-size: 15px;
 }
+.messageSearchContainer:last-child {
+	height: 70px;
+	justify-content: center;
+	flex-direction: row;
+	background-color: aliceblue;
+}
+.messageSearchContainer:last-child > p {
+	font-size: 18px;
+	color: black;
+	font-family: Catamaran Medium;
+}
+.messageSearchContainer:last-child:hover{
+	background-color: darkturquoise;
+	color: black;
+}
+
 
 
 
@@ -790,4 +806,8 @@ img[alt='icon_user'] {
 @font-face {
 	src: url("fonts/ProximaNova/ProximaNova Light.ttf");
 	font-family: ProximaNova Light;
+}
+@font-face {
+	src: url("fonts/catamaran/Catamaran-Medium.ttf");
+	font-family: Catamaran Medium;
 }
