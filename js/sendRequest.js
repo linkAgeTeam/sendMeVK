@@ -42,3 +42,26 @@ function sendRequest (method, params, func){
 		success: func
 	});
 }
+
+// функция для запроса long poll 
+function longPollRequest(func){
+	//перый запрос для получения сервира ключя и ts этого сианся
+	sendRequest("messages.getLongPollServer", {}, (data) => longPollResponse(data.response, func));
+
+	//в переменной res = response хранится адресс сервера ключь и тс
+	function longPollResponse(res, func){
+		var server = res.server;
+		var key = res.key; 
+		var ts = res.ts;
+		getUpdate(server, key, ts,func);
+
+	}
+}
+function getUpdate(server, key, ts, func){
+	$.ajax({
+		url: "https://"+server+"?act=a_check&key="+key+"&ts="+ts+"&wait=25&mode=8&version=2" ,
+		method: 'GET',
+		dataType: 'JSONP',
+		success: func
+	});
+}

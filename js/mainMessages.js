@@ -1,15 +1,16 @@
-$(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
+window.onload = () => $(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
 
-function drawMessageHistory(chatId){
+function drawMessageHistory (chatId) {
+	console.log(chatId[0]);
+	if (chatId == undefined) return false;
+
 	$(".no_history").css("display", "none");
 
 	$("#mainInputForMessage").val("");
 
 	var thisUserId, thisUserImg, thisUserName, chatName;
 	
-	//для подписи имя беседы с верху
-	chatName   = document.getElementById("chatName");
-	chatName.innerHTML = chatId[0].ownerElement.children[1].children[0].innerHTML ;
+	document.getElementById("chatName").textContent = chatId[0].ownerElement.childNodes[1].childNodes[0].innerText; 
 
 	sendRequest("users.get", {fields: 'photo_50'}, (data) => getThisUser(data.response[0]));
 
@@ -19,7 +20,7 @@ function drawMessageHistory(chatId){
 		thisUserName = thisUser.first_name + " " + thisUser.last_name;
 	}
 
-	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 20, extended: 1}, (data) => renderMessageHistory(data.response));
+	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 100, extended: 1}, (data) => renderMessageHistory(data.response));
 
 	function renderMessageHistory (m){
 		var item = m.items.reverse();
@@ -42,7 +43,7 @@ function drawMessageHistory(chatId){
 			}
 			timeMessage = timeConverter(item[i].date);
 			textMessage = item[i].body;
-			//console.log(item[i])
+			
 			if ("attachments" in item[i]) { // Значит в сообщение есть медиаконтент
 				switch (item[i].attachments[0].type) { 
 					case "photo": mediaContent = "<img class='message_photo' src='" + item[i].attachments[0].photo.photo_604 + "'><br>"; break;

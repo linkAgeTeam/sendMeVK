@@ -7,6 +7,10 @@ var point;
 // Что бы при загрузке по умолчанию была открыта вкладка "Message"
 menu (0);  
 
+longPollRequest((data) => console.log(data) );
+
+//начальный запрос для получения server ts 
+sendRequest("messages.searchConversations", {}, (data) => messageSearch(data.response));
 // Обрабатывает загрузку страницы и убирает лого
 function documentLoad(){
 	if (document.readyState == 'complete') {
@@ -45,7 +49,8 @@ function menu (pointer){
 
 // Обрабатывает поиск в сайдбаре
 $("#sidebar_search").keyup(function() {
-	sendRequest("messages.searchConversations", {q: document.getElementById("sidebar_search").value, count: 15, extended: 1}, (data) => messageSearch(data.response));
+	var serachedVal = document.getElementById("sidebar_search").value;
+	sendRequest("messages.searchConversations", {q:serachedVal, count: 15, extended: 1}, (data) => messageSearch(data.response));
 });
 
 // Функция обработки поиска
@@ -57,55 +62,46 @@ function messageSearch (data) {
 	}		
 	
 	// Поиск переписок по названию диалога
-	function SearchConversationByName(m){ 
-		var html = "";
-		if ("items" in m) {
-			for (var i=0; i < m.items.length; i++) {
-				if (m.items[i].peer.type == "chat") {
-					var chatImage = ("photo" in m.items[i].chat_settings) ? m.items[i].chat_settings.photo.photo_100  : "img/noImageForChat.png";
-					var chatName  =	(m.items[i].chat_settings.title.length > 25)? m.items[i].chat_settings.title.slice(0,25)+"..." : m.items[i].chat_settings.title; 
-					var p_id = m.items[i].peer.id;
-					drawInHtml(chatName, chatImage, p_id);
-				} 
+	function SearchConversationByName(m) { // Поиск переписок по названию диалога
+			var html = "";
+			if ("items" in m) {
+				for (var i=0; i < m.items.length; i++) {
+					if (m.items[i].peer.type == "chat") {
+						const name = m.items[i].chat_settings.title.length >= 25 ? m.items[i].chat_settings.title.slice(0, 25) + "..." : m.items[i].chat_settings.title;
+						const photo = ("photo" in m.items[i].chat_settings) ? m.items[i].chat_settings.photo.photo_100  : "img/noImageForChat.png";
+						html += "<div class='messageSearchContainer' data-id='" + m.items[i].peer.id + "'>" 
+						+ "<img src='" + photo + "'>"
+						+ "<p>" + name + "</p>"	
+						+ "</div>";
+					} 
+				}
 			}
-		}
-		if ("profiles" in m) {
-			for (var i=0; i < m.profiles.length; i++) {
-				var userName  =	m.profiles[i].first_name + " " + m.profiles[i].last_name ;
-				var userImage = m.profiles[i].photo_100 ;
-				var p_id   = m.profiles[i].id; 
-				drawInHtml(userName, userImage, p_id);	  
+			if ("profiles" in m) {
+				for (var i=0; i < m.profiles.length; i++) {
+					const name =  m.profiles[i].first_name.length > 28 ?  m.profiles[i].first_name.slice(0, 28) + "..." : m.profiles[i].first_name;
+					html += "<div class='messageSearchContainer' data-id='" + m.profiles[i].id + "'>" 
+					+ "<img src='" + m.profiles[i].photo_100 + "'>"
+					+ "<p>" + name + " " + m.profiles[i].last_name + "</p>"	
+					+ "</div>"; 
+				}
 			}
-		}
-		if ("groups" in m) {
-			for (var i=0; i < m.groups; i++) {
-				var groupImage = m.groups[i].photo_100;
-				var groupName  = (m.groups.name.length > 25)? m.groups[i].name.slice(0,25)+"..." :  m.groups[i].name;
-				var p_id = m.groups.id ;
-				drawInHtml(groupName, groupImage, p_id);
-			}
-		}
-		
-		function drawInHtml(name, img, peer_id){
-				html += "<div class='side_bar_messages_container' data-id='" + peer_id + "'>"
-				  		+ "<div>"
-							+ "<img src='" + img + "'alt='img_conversation' />"
-						+ "</div>"
-						+ "<div class='side_bar_messages_container_block2'>"
-							+ "<p style='font-size:14px; margin-left:-20px; margin-bottom:-20px;'>" + name + "</p>"
-							+ "<p> </p>"
-						+ "</div>"
-						+ "<div>"
-							+ "<p style='display:none '> </p>"
-							+ "<p></P>"
-						+ "</div>"
+			if ("groups" in m) {
+				for (var i=0; i < m.groups.length; i++) {
+					const name = m.groups[i].name.length > 28 ? m.groups[i].name.slice(0, 28) + "..." : m.groups[i].name;
+					html += "<div class='messageSearchContainer' data-id='" + m.groups[i].id + "'>" 
+					+ "<img src='" + m.groups[i].photo_100 + "'>"
+					+ "<p>" + name + "</p>"	
 					+ "</div>";
-				$(".bottom_bar_content").html(html);
-		}
-		$(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
-	}	
-}
+				}
+			}
+			html += "<div class='messageSearchContainer'>"
+			+ "<p>Search in messages</p>"
+			+ "</div>";
 
+			$(".bottom_bar_content").html(html);
+			$(".messageSearchContainer").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
+		}	
+}
 
 // метод для вызова список собшений в сайд баре при клике
 function messagesMenu(){	
@@ -343,6 +339,7 @@ $("img[alt='remove']").on("click", function(){
 		$(html).appendTo("#sidebar");
 	}
 });
+
 // При клике на лого меню разворачивает сайдбар
 $("img[alt='menu']").on("click", function(){
 	$(".miniside").css("display", "none");
