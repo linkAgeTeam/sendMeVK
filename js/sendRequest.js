@@ -28,7 +28,7 @@ function getUrl (method, params){
 
 	params = params || {}; // Проверка если параметры не переданы то преобразуем их в пустой обьект
 
-	params['access_token'] = rToken;
+	params['access_token'] = aToken;
 	return 'https://api.vk.com/method/'+ method + '?' + $.param(params) + '&v=5.52';
 }
 // Функция создает запрос принимая название метода его параметры и функцию калбека при успешном выполнение

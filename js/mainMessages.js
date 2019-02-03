@@ -3,13 +3,16 @@ window.onload = () => $(".side_bar_messages_container").on("click", function (pE
 function drawMessageHistory (chatId, name){
 	if (chatId == undefined) return false;
 
+$(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
+
+function drawMessageHistory(chatId){
 	$(".no_history").css("display", "none");
 
 	$("#mainInputForMessage").val("");
 
 	var thisUserId, thisUserImg, thisUserName, chatName;
 	
-	document.getElementById("chatName").textContent = name[0].value;
+	//document.getElementById("chatName").textContent = name[0].value;
 
 	sendRequest("users.get", {fields: 'photo_50'}, (data) => getThisUser(data.response[0]));
 
@@ -19,7 +22,7 @@ function drawMessageHistory (chatId, name){
 		thisUserName = thisUser.first_name + " " + thisUser.last_name;
 	}
 
-	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 100, extended: 1}, (data) => renderMessageHistory(data.response));
+	sendRequest("messages.getHistory", {peer_id: chatId[0].value, count: 20, extended: 1}, (data) => renderMessageHistory(data.response));
 
 	function renderMessageHistory (m){
 		var item = m.items.reverse();
@@ -107,4 +110,4 @@ function drawMessageHistory (chatId, name){
 		}
 		$(".message_history").html(html);
 	}
-}
+}}
