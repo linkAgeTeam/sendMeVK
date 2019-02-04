@@ -1,7 +1,6 @@
 window.onload = () => $(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
 
 function drawMessageHistory (chatId) {
-
 	if (chatId == undefined) return false;
 
 	$(".no_history").css("display", "none");
@@ -11,6 +10,8 @@ function drawMessageHistory (chatId) {
 	var thisUserId, thisUserImg, thisUserName, chatName;
 	
 	document.getElementById("chatName").textContent = "hello world"; // Должно выводить название диалога в main
+
+	document.getElementById("chatName").textContent = chatId[0].ownerElement.childNodes[1].childNodes[0].innerText; 
 
 	sendRequest("users.get", {fields: 'photo_50'}, (data) => getThisUser(data.response[0]));
 

@@ -774,6 +774,21 @@ img[alt='icon_user'] {
 	background-color: darkturquoise;
 	color: black;
 }
+#searchInMessage {
+	display: flex;
+	height: 70px;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	border-bottom: 2px whitesmoke solid;
+	cursor: pointer;
+	flex-direction: row;
+	background-color: aliceblue;
+}
+#searchInMessage:hover {
+	background-color: lightblue;
+    transition: .6s;
+}
 
 
 

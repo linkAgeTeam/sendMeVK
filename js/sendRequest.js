@@ -18,8 +18,6 @@
 	//https://oauth.vk.com/blank.html#access_token=66ce4b0239e2bf41c8b0975fbfad81c119f1624fec0a95b887b78c691cd452008d4c02c9e7d4847617794&expires_in=0&user_id=183457480
 }*/
 
-
-
 // Функция принимает метод и его параметры и возврощяет url строку для http запроса
 function getUrl (method, params){
 	const rToken = "ccdcff221d43ffc19be3b8006cd36663117013aa97a5c7f4e4811cd717c5b2a93630505eedf729fbfeb5b";
@@ -42,3 +40,27 @@ function sendRequest (method, params, func){
 		success: func
 	});
 }
+
+/*
+// функция для запроса long poll 
+function longPollRequest(func){
+	//перый запрос для получения сервира ключя и ts этого сианся
+	sendRequest("messages.getLongPollServer", {}, (data) => longPollResponse(data.response, func));
+
+	//в переменной res = response хранится адресс сервера ключь и тс
+	function longPollResponse(res, func){
+		var server = res.server;
+		var key = res.key; 
+		var ts = res.ts;
+		getUpdate(server, key, ts,func);
+
+	}
+}
+function getUpdate(server, key, ts, func){
+	$.ajax({
+		url: "https://" + server + "?act=a_check&key=" + key + "&ts=" + ts + "&wait=25&mode=8&version=2" ,
+		method: 'GET',
+		dataType: 'JSONP',
+		success: func
+	});
+}*/
