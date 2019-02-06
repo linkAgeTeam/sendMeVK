@@ -2,6 +2,7 @@
 
 var state = setInterval(documentLoad, 100);
 var point;
+var globalUser; // Обьект опысывающий текущего пользователя
 
 // Что бы при загрузке по умолчанию была открыта вкладка "Message"
 menu (0);  
@@ -56,7 +57,7 @@ $("#sidebar_search").keyup(function() {
 	sendRequest("messages.searchConversations", {q:serachedVal, count: 15, extended: 1}, (data) => messageSearch(data.response));
 });
 function messageSearch (data) { // Функция обработки поиска
-	if (data == undefined) throw new Error("Too many requests in per second");
+	if (data == undefined) throw new Error("Internal error");
 	else if (data.count == 0) {
 			$(".bottom_bar_content").html("<div class='search_false' id='searchMessageClick_2'><p>Dialogue not found!</p><p>Search in messages</p></div>");
 			$("#searchMessageClick_2").on("click", () => SearchConversationByMessage()); // слушатель события 2
@@ -103,27 +104,53 @@ function SearchConversationByName(m) { // Поиск переписок по н�
 	$(".messageSearchContainer").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
 	$("#searchInMessage").on("click", () => SearchConversationByMessage()); // Кароче слушатель события не ставится
 }
-function SearchConversationByMessage () { // Поиск сообщений 
-	sendRequest("messages.search", {q: document.getElementById("sidebar_search").value, count: 15, extended: 1}, (data) => drawMessages(data.response));
+function SearchConversationByMessage () { // Поиск по сообщениям
+	sendRequest("messages.search", {q: document.getElementById("sidebar_search").value, count: 100, extended: 1}, (data) => drawMessages(data.response), "5.86");
 
 	function drawMessages (m) {
+		if (m == undefined) throw new Error("Internal error");
+		// items - Список обьектов сообщений
+		// conversations - Список обьектов бесед
+		// profiles - Cписок обьектов описывающих поользователей (имя фото)
+		// groups - Cписок обьектов описывающий группы (имя фото)
 		var html = "";
+		for (var i=0; i < m.items.length; i++) {
+			var name, img, fromId, bool = true;
+			var thisId = m.items[i].peer_id; // id текущей беседы
+			var lastMessage = m.items[i].text.length > 35 ? m.items[i].text.slice(0, 33) + "..." : m.items[i].text;
+			var time = timeConverter(m.items[i].date);
 
-		if ("items" in m) {
-			var name;
-
-			renderMessages()
+			if ("profiles" in m) {
+				for(var k=0; k < m.profiles.length; k++){
+					if (m.profiles[k].id == thisId) {
+						name = m.profiles[k].first_name + " " +  m.profiles[k].last_name;
+						name = name.length > 30 ? name.slice(0, 25) + "..." : name;
+						img = "photo_100" in m.profiles[k] ? m.profiles[k].photo_100 : "img/noImageForChat.png";
+						bool = false;
+					}
+				}
+			}
+			if ("conversations" in m && bool) {
+				for(var k=0; k < m.conversations.length; k++) {
+					console.log(m.conversations[k].peer.id, thisId)
+					if(m.conversations[k].peer.id == thisId) {
+						name = m.conversations[k].chat_settings.title.length > 30 ? m.conversations[k].chat_settings.title.slice(0, 25) + "..." : m.conversations[k].chat_settings.title;
+						img = "photo_100" in m.conversations[k].chat_settings ? m.conversations[k].chat_settings.photo_100 : "img/noImageForChat.png";
+						bool = false;
+					}
+				}
+			}
+			if ("groups" in m && bool) {
+				for (var k=0; k < m.groups.length; k++) {
+					if ((m.groups[k].id - m.groups[k].id * 2) == m.items[i].peer_id) {
+						name = m.groups[k].name.length > 30 ? m.groups[k].name.slice(0, 25) + "..." : m.groups[k].name;
+						img = "photo_100" in m.groups[k] ? m.groups[k].photo_100 : "img/noImageForChat.png";
+					}
+				}
+			}
+			renderMessages (name, img, lastMessage, time, thisId);
 		}
-		if ("groups" in m) {
-
-		}
-		if ("profiles" in m) {
-
-		}
-
-		console.log(m);
-
-		function renderMessages (name, img, lastMessage, unreadMessages, style, time, peer_id) {
+		function renderMessages (name, img, lastMessage, time, peer_id) {
 			html += "<div class='side_bar_messages_container' data-id='" + peer_id + "'data-name='" + name + "'>"
 				+ "<div>"
 					+ "<img src='" + img + "'alt='img_conversation' />"
@@ -133,11 +160,35 @@ function SearchConversationByMessage () { // Поиск сообщений
 					+ "<p>" + lastMessage + "</p>"
 				+ "</div>"
 				+ "<div>"
-					+ "<p " + style + ">" + unreadMessages + "</p>"
-					+ "<p>" + time + "</P>"
+					+ "<p class='message_search_fix'>" + time + "</P>"
 				+ "</div>"
-			+ "</div>";
+			+ "</div>"
+			$(".bottom_bar_content").html(html);
+			$(".side_bar_messages_container").on("click", function (pElement) { drawMessageHistory($(pElement.currentTarget.attributes[1])) });
 		}
+		function timeConverter(UNIX_timestamp){
+	  			var a = new Date(UNIX_timestamp * 1000);
+	  			var b = new Date();
+	  			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+	  			var year = a.getFullYear() == b.getFullYear() ? "" : a.getFullYear();
+	  			var month = months[a.getMonth()];
+	  			
+	  			//если собшения пришло сегодня то выводит только время собшения
+	  			if (a.getDate() == b.getDate() && a.getMonth() == b.getMonth() && a.getFullYear() == b.getFullYear()){
+	  				var hour = a.getHours();
+	  				var min  = a.getMinutes();
+	  				var time =  hour + ':' + min;	
+	  			}// если оно пришло вчера то выводит только надпись вчера  
+	  			else if (a.getDate() == (b.getDate() - 1) &&  a.getMonth() == b.getMonth() && a.getFullYear() == b.getFullYear()){
+	  				var date = "yesterday";
+	  				var time = 	date ;
+	  			}// а если старое то только число и годб год в том случие если он не равен нашему году 
+	  			else { 
+	  				var date = a.getDate();
+	  				var time = date + ' ' + month + ' ' + year ;
+	  			}
+	  			return time;
+			}
 	}
 }
 // метод для вызова список собшений в сайд баре при клике
@@ -145,7 +196,7 @@ function messagesMenu() {
 	sendRequest("messages.getConversations", { count: 10, extended: 1}, (data) => drawMessages(data.response));
 
 	function drawMessages(m){
-		if (m == undefined) throw new Error("Too many requests in per second");
+		if (m == undefined) throw new Error("Internal error");
 
 		var html = " ";
 		var message = m.items ;//array в котором хранятся last_message и Conversation
@@ -207,7 +258,9 @@ function messagesMenu() {
 
 				drawInHtml(chatName, chatImage, lastMessage, unreadMessages, style, time, chatId);
 			}
-			else new Error ("there is no support for this type of message yet");
+			else
+				new Error ("there is no support for this type of message yet");
+
 			function timeConverter(UNIX_timestamp){
 	  			var a = new Date(UNIX_timestamp * 1000);
 	  			var b = new Date();
@@ -216,13 +269,12 @@ function messagesMenu() {
 	  			var month = months[a.getMonth()];
 	  			
 	  			//если собшения пришло сегодня то выводит только время собшения
-	  			if (a.getDate() == b.getDate() && a.getMonth() == b.getMonth()){
-	  				//var date = "";
+	  			if (a.getDate() == b.getDate() && a.getMonth() == b.getMonth() && a.getFullYear() == b.getFullYear()){
 	  				var hour = a.getHours();
 	  				var min  = a.getMinutes();
 	  				var time =  hour + ':' + min;	
 	  			}// если оно пришло вчера то выводит только надпись вчера  
-	  			else if (a.getDate() == (b.getDate() - 1) &&  a.getMonth() == b.getMonth()){
+	  			else if (a.getDate() == (b.getDate() - 1) &&  a.getMonth() == b.getMonth() && a.getFullYear() == b.getFullYear()){
 	  				var date = "yesterday";
 	  				var time = 	date ;
 	  			}// а если старое то только число и годб год в том случие если он не равен нашему году 
@@ -311,28 +363,27 @@ function friendsMenu (){
 			$(".bottom_bar_content").html(html);
 		}
 		function timeConverter(UNIX_timestamp){
-  			var a = new Date(UNIX_timestamp * 1000);
-  			var b = new Date();
-  			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  			var year = a.getFullYear() == b.getFullYear() ? "" : a.getFullYear();
-  			var month = months[a.getMonth()];
-  			
-  			//если собшения пришло сегодня то выводит только время собшения
-  			if (a.getDate() == b.getDate() && a.getMonth() == b.getMonth()){
-  				//var date = "";
-  				var hour = a.getHours();
-  				var min  = a.getMinutes();
-  				var time =  hour + ':' + min;	
-  			}// если оно пришло вчера то выводит только надпись вчера  
-  			else if (a.getDate() == (b.getDate() - 1) &&  a.getMonth() == b.getMonth()){
-  				var date = "yesterday";
-  				var time = 	date ;
-  			}// а если старое то только число и годб год в том случие если он не равен нашему году 
-  			else{ 
-  				var date = a.getDate();
-  				var time = date + ' ' + month + ' ' + year ;
-  			}
-  			return time;
+	  		var a = new Date(UNIX_timestamp * 1000);
+	  		var b = new Date();
+	  		var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+	  		var year = a.getFullYear() == b.getFullYear() ? "" : a.getFullYear();
+	  		var month = months[a.getMonth()];
+	  		
+	  		//если собшения пришло сегодня то выводит только время собшения
+	  		if (a.getDate() == b.getDate() && a.getMonth() == b.getMonth() && a.getFullYear() == b.getFullYear()){
+	  			var hour = a.getHours();
+	  			var min  = a.getMinutes();
+	  			var time =  hour + ':' + min;	
+	  		}// если оно пришло вчера то выводит только надпись вчера  
+	  		else if (a.getDate() == (b.getDate() - 1) &&  a.getMonth() == b.getMonth() && a.getFullYear() == b.getFullYear()){
+	  			var date = "yesterday";
+	  			var time = 	date ;
+	  		}// а если старое то только число и годб год в том случие если он не равен нашему году 
+	  		else { 
+	  			var date = a.getDate();
+	  			var time = date + ' ' + month + ' ' + year ;
+	  		}
+	  		return time;
 		}
 	}	
 }
@@ -340,10 +391,9 @@ function friendsMenu (){
 // Показывает инфу о текущем юзере (сверху в сайдбаре)
 sendRequest("users.get", {fields: 'photo_100,status'}, (data) => Draw_user_information(data.response[0]));
 function Draw_user_information (user){
+	globalUser = user;
 	$("#photo_user").attr("src", user.photo_100);
-
 	$("#name_user").text(user.first_name + ' ' + user.last_name);
-
 	$("#status_input").attr("value", user.status);
 }
 //метод для обновленмя статуса

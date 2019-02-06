@@ -114,7 +114,7 @@ aside {
 	position: relative;
 }
 .top_bottom_bar > div {
-	margin-left: 30px;
+	margin-left: 8px;
 	display: flex;
 }
 .top_bottom_bar > div > input {
@@ -127,6 +127,7 @@ aside {
 	padding: 3px 35px;
 	border-radius: 35px;
 	border: 1px solid #4285f4;
+	width: 225px;
 }
 .top_bottom_bar > div > input:focus {
 	border-color: white;
@@ -637,12 +638,16 @@ img[alt='icon_user'] {
 	background-color: #009eff;
 	border-radius: 10px;
 	flex-direction: column;
-	z-index: 2;
+	z-index: 4;
 	position: fixed;
 	justify-content: center;
 	top: 218px;
 	left: 255px;
 	display: none;
+	border: 2px solid blue;
+}
+.list_search:hover {
+	border: 2px solid white;
 }
 .list_search > p:first-child {
 	margin-top: 15px;
@@ -662,7 +667,7 @@ img[alt='icon_user'] {
 	position: absolute;
 	width: 24px;
 	height: 12px !important;
-	bottom: 115px;
+	bottom: 120px;
 	left: 80px;
 }
 #remove_list {
@@ -789,7 +794,14 @@ img[alt='icon_user'] {
 	background-color: lightblue;
     transition: .6s;
 }
-
+.message_search_fix {
+	background-color: inherit !important;
+	border: 0px !important;
+	width: 70px !important;
+	margin: 0px;
+	position: relative;
+	bottom: 18px;
+}
 
 
 

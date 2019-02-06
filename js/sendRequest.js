@@ -19,7 +19,7 @@
 }*/
 
 // Функция принимает метод и его параметры и возврощяет url строку для http запроса
-function getUrl (method, params){
+function getUrl (method, params, version){
 	const rToken = "ccdcff221d43ffc19be3b8006cd36663117013aa97a5c7f4e4811cd717c5b2a93630505eedf729fbfeb5b";
 	const aToken = "4a4b6ba0e03968cb7d262df9c6ff17f4290ebac788a25755ac2eff40232a44a79ba6cc83f3d04a6e2c68f";
 	if (!method) throw new Error('You did not specify a method!'); // Если метод не был указан при вызове функций то будет создана ошибка
@@ -27,15 +27,15 @@ function getUrl (method, params){
 	params = params || {}; // Проверка если параметры не переданы то преобразуем их в пустой обьект
 
 	params['access_token'] = rToken;
-	return 'https://api.vk.com/method/'+ method + '?' + $.param(params) + '&v=5.52';
+	return 'https://api.vk.com/method/'+ method + '?' + $.param(params) + '&v=' + version;
 }
 // Функция создает запрос принимая название метода его параметры и функцию калбека при успешном выполнение
-function sendRequest (method, params, func){
+function sendRequest (method, params, func, version='5.52'){ 
 	$.ajax({
-		url: getUrl(method, params),
+		url: getUrl(method, params, version),
 		method: 'GET',
 		dataType: 'JSONP',
-		//statusCode: { 200: () => console.log('Ураа рабатает') }, Просто оставлю это тут :D
+		//statusCode: { 200: () => //do something },
 		//error: (jqXHR, textStatus) => console.log(jqXHR),
 		success: func
 	});
