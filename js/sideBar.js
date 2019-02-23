@@ -23,6 +23,13 @@ document.querySelector("#menu_list").onclick   = () => document.querySelector('.
 document.querySelector(".list_search").onclick = () => document.querySelector(".list_search").style.display = 'none';
 document.querySelector("#remove_list").onclick = () => document.querySelector(".list_search").style.display = 'none';
 
+$("#status_input").on("focus", function () {
+	$(".border_status").css('animation-name', 'border_state');
+});
+$("#status_input").on("blur", function () {
+	$(".border_status").css('animation-name', 'back_border_state');
+});
+
 // Обрабатывает работу меню в сайдбаре
 function menu (pointer){
 	document.querySelectorAll(".bottom_bar_menu > div")[pointer].style.borderBottom = "2px solid #72a7ff";
@@ -431,7 +438,7 @@ $("img[alt='menu']").on("click", function(){
 	$(".miniside").css("display", "none");
 	$("aside").css("display", "flex");
 	$("aside").css("animation-name", "sidebarBack");
-	$(".chat_information").css({"width": "calc(100vw - 370px","left": "auto" });
+	$(".chat_information").css({"width": "calc(100vw - 390px","left": "auto" });
 	$(".chat_menu").css({"width": "calc(100vw - 384px", "left": "auto" });
 	$(".chat_messege").css("width", "calc(100vw - 383px");
 	$(".no_history").css("width", "calc(100vw - 385px)");

@@ -6,6 +6,48 @@ body {
 	display: flex;
 	overflow-x: hidden;
 }
+
+.log_container {
+	width: 100vw;
+	height: 100vh;
+	background-color: white;
+	z-index: 10;
+	position: absolute;
+}
+.logoDiv{
+	width: 30%;
+	height: 150px;
+	margin: 5% auto 0px;
+	background-image: url("../img/logo.png");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+.divforA {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+#vkLoginButton{
+	padding: 10px;
+	
+	text-decoration: none;
+	font-weight: bold;
+	color:black;
+
+	border:1px solid #2a63d8;
+}
+#vkLoginButton:hover{
+	background-color: #2a63d8;
+	transition: .5s;
+	color:white;
+	border:1px solid #2a63d8 ;
+	border-radius: 15px;
+}
+
+
+
+
 .loadDocument {
 	position: absolute;
 	width: 100%;
@@ -96,6 +138,7 @@ aside {
 .top_middle_bar > div:last-child {
 	align-self: end;
 	margin-bottom: 30px;
+	margin-left: 5px;
 }
 .top_middle_bar > div:last-child > form > input {
 	background-color: inherit;
@@ -802,8 +845,19 @@ img[alt='icon_user'] {
 	position: relative;
 	bottom: 18px;
 }
-
-
+.border_status {
+	width: 0px;
+	height: 2px;
+	background-color: red;
+	animation-duration: 2s;
+	animation-fill-mode: forwards;
+	margin-top: 5px;
+}
+#status_form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
 
 
 
@@ -811,6 +865,23 @@ img[alt='icon_user'] {
 
 
 /*///// Animation /////*/
+@keyframes border_state {
+	from {
+		width: 0;
+	}
+	to {
+		width: 180px;
+	}
+}
+@keyframes back_border_state{
+	from {
+		width: 180px;
+	}
+	to {
+
+		width: 0;
+	}
+}
 @keyframes sidebarHide
 {
 	from {
