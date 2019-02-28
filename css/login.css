@@ -2,40 +2,69 @@
 	margin : 0 ;
 	padding: 0 ;
 }
-
-html{
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100vw;
+	height: 100vh;
+	background-color: #edeef0;
+	min-height: 850px;
+}
+body > img {
+	width: 240px;
+	position: relative;
+	bottom: 95px;
+}
+.login {
+	display: flex;
+	flex-direction: column;
+	width: 690px;
 	background-color: white;
+	border-radius: 5px;
+	box-shadow: 0px 2px 5px 0px gray;
+	line-height: 50px;
+	font-family: ProximaNova Regular;
+	padding: 40px;
+	font-size: 17px;
+	position: relative;
+	bottom: 55px;
 }
-
-.logoDiv{
-	width: 30%;
-	height: 150px;
-	
-	margin-top: 5%;
-	margin-left: auto;
-	margin-right: auto;
-
-	background-image: url("../img/logo.png");
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: center;
+.login > p:first-of-type {
+	text-align: center;
+	font-size: 20px;
 }
-
-
-#vkLoginButton{
-	padding: 10px;
-	
+footer {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 770px;
+	top: 10%;
+	position: relative;
+	font-family: ProximaNova Regular;
+}
+footer > p > a {
 	text-decoration: none;
-	font-weight: bold;
-	color:black;
-
-	border:1px solid #2a63d8;
+}
+footer > p > a:hover {
+	text-decoration: underline;
+}
+footer > p:last-of-type {
+	cursor: pointer;
+}
+footer > p:last-of-type > span:first-of-type {
+	color: #828282;
+}
+footer > p:last-of-type > span {
+	color: blue;
+}
+footer > p:last-of-type > span:hover {
+	text-decoration: underline;
 }
 
-#vkLoginButton:hover{
-	background-color: #2a63d8;
-	transition: .5s;
-	color:white;
-	border:1px solid #2a63d8 ;
-	border-radius: 15px;
+
+@font-face {
+	src: url("fonts/ProximaNova/ProximaNova Regular.ttf");
+	font-family: ProximaNova Regular;
 }
